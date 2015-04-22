@@ -1,0 +1,16 @@
+{
+  "name": "lou",
+  "version": "0.0.0",
+  "description": "REST API Generator using Express and Mongoose",
+  "main": "rest-api.js",
+  "dependencies": {
+    "express": "^4.12.3",
+    "mongoose": "^4.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bobby Brennan <bobby@lucybot.com> (https://lucybot.com/)",
+  "license": "ISC"
+}
