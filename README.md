@@ -1,14 +1,61 @@
 # We be Jammin'
 
+## Installation
 ```npm install jammin```
 
 **Note: Jammin is still in alpha. Not all features have been implemented.**
 
+## About
 Jammin' is the fastest way to build a JSON REST API with Node, Express, and MongoDB. It consists of a light-weight wrapper around Mongoose and an Express router to expose HTTP methods.
 
-Jammin supports HTTP verbs GET, PUT, POST, and DELETE. By default, Jammin will use req.query and req.params for GET and DELETE requests, and will use 
+## Usage
 
-## Example Usage
+```js
+var Jammin = require('jammin');
+var API = new Jammin(DatabaseURL);
+
+var PetSchema = new Jammin.Schema({
+  name: String
+});
+
+API.define('pet', PetSchema)
+```
+
+### GET
+Jammin will use req.params and req.query to find an item the database.
+```js
+API.pet.get('/pet/{name}');
+```
+
+### POST
+Jammin will use req.body to create a new item in the database.
+```js
+API.pet.post('/pet');
+```
+
+### PUT
+Jammin will use req.params and req.query to find an item in the database, and use req.body to update that item.
+```js
+API.pet.put('/pet/{name}');
+```
+
+### DELETE
+Jammin will use req.params and req.query to remove an item from the database.
+```js
+API.pet.delete('/pet/{name}');
+```
+
+### Middleware
+You can use middleware to intercept Jammin requests, alter req.params/query/body, perform authentication, etc.
+// Searches pets by name using parameter 'q', e.g. GET api.pets.com/search/pets?q=fido
+API.pet.getMany('/search/pets', function(req, res, next) {
+  req.query = {
+    name: { "$regex": new RegExp(req.query.q) }
+  };
+  next();
+})
+
+## Extended Usage
 
 ```js
 
