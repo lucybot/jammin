@@ -1,16 +1,29 @@
+# We be Jammin'
+
+```npm install jammin```
+
+** Note: Jammin is still in alpha. Not all features have been implemented. **
+
+Jammin' is the fastest way to build a JSON REST API with Node, Express, and MongoDB.
+
+Jammin' is a light-weight wrapper around Mongoose
+
+## Example Usage
+
+```js
+
 var Hash = require('password-hash');
 var App = require('express')();
 App.use(require('body-parser').json());
-
 var DatabaseURL = 'mongodb://admin:password@ds035448.mongolab.com:35448/lou-test'
 var Jammin = require('../rest-api.js')
 var API = new Jammin(DatabaseURL);
 
+// Jammin.Schema is an alias for Mongoose.Schema
 var UserSchema = new Jammin.Schema({
   username: {type: String, required: true, unique: true, match: /^\w+$/},
   password_hash: {type: String, required: true},
 })
-
 var PetSchema = new Jammin.Schema({
   id: {type: Number, required: true, unique: true},
   name: String,
@@ -19,35 +32,18 @@ var PetSchema = new Jammin.Schema({
   imageURLs: [String]
 })
 
-var authenticateUser = function(req, res, next) {
-  var query = {
-    username: req.headers['username'],
-  };
-  API.user.db.findOne(query, function(err, user) {
-    if (err) {
-      res.status(500).json({error: err.toString()})
-    } else if (!user) {
-      res.status(401).json({error: "Unknown user:" + query.username});
-    } else if (!Hash.verify(req.headers['password'], user.password_hash)) {
-      res.status(401).json({error: "Invalid password for " + query.username}) 
-    } else {
-      req.user = user;
-      next();
-    }
-  }) 
-}
-
+// define is an alias for Mongoose.model
 API.define('pet', PetSchema);
 API.define('user', UserSchema);
+
+// Gets a pet by id
+API.pet.get('/pets/{id}');
 
 // Creates a new user
 API.user.post('/user', function(req, res, next) {
   req.body.password_hash = Hash.generate(req.body.password);
   next();
 });
-
-// Gets a pet by id
-API.pet.get('/pets/{id}');
 
 // Searches pets by name
 API.pet.getMany('/search/pets', {
@@ -66,7 +62,7 @@ API.pet.post('/pets', authenticateUser, function(req, res, next) {
   next();
 });
 
-// Delete's a pet.
+// Deletes a pet.
 API.pet.delete('/pets/{id}', authenticateUser, function(req, res, next) {
   req.query = {
     id: req.params.id,
@@ -75,6 +71,7 @@ API.pet.delete('/pets/{id}', authenticateUser, function(req, res, next) {
   };
   next();
 });
-
 App.use('/api', API.router);
 App.listen(3000);
+
+```

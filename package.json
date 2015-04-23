@@ -1,8 +1,8 @@
 {
-  "name": "lou",
+  "name": "jammin",
   "version": "0.0.0",
   "description": "REST API Generator using Express and Mongoose",
-  "main": "rest-api.js",
+  "main": "index.js",
   "dependencies": {
     "express": "^4.12.3",
     "mongoose": "^4.0.1"
