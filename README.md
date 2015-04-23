@@ -16,7 +16,7 @@ var Hash = require('password-hash');
 var App = require('express')();
 
 var DatabaseURL = 'mongodb://<username>:<password>@<mongodb_host>';
-var Jammin = require('../rest-api.js')
+var Jammin = require('jammin')
 var API = new Jammin(DatabaseURL);
 
 // Jammin.Schema is an alias for Mongoose.Schema
