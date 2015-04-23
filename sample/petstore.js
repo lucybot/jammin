@@ -4,7 +4,14 @@ var App = require('express')();
 
 var DatabaseURL = JSON.parse(FS.readFileSync('./creds/mongo.json', 'utf8')).url;
 var Jammin = require('../index.js')
-var API = new Jammin(DatabaseURL);
+var API = new Jammin({
+  databaseURL: DatabaseURL,
+  swagger: {
+    info: {title: 'Pet Store'},
+    host: 'api.example.com',
+    basePath: '/api'
+  }
+});
 
 var UserSchema = new Jammin.Schema({
   username: {type: String, required: true, unique: true, match: /^\w+$/},
