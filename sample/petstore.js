@@ -1,9 +1,10 @@
+var FS = require('fs');
 var Hash = require('password-hash');
 var App = require('express')();
 App.use(require('body-parser').json());
 
-var DatabaseURL = 'mongodb://admin:password@ds035448.mongolab.com:35448/lou-test'
-var Jammin = require('../rest-api.js')
+var DatabaseURL = JSON.parse(FS.readFileSync('./creds/mongo.json', 'utf8')).url;
+var Jammin = require('../index.js')
 var API = new Jammin(DatabaseURL);
 
 var UserSchema = new Jammin.Schema({

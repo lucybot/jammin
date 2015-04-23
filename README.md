@@ -15,7 +15,8 @@ Jammin' is a light-weight wrapper around Mongoose
 var Hash = require('password-hash');
 var App = require('express')();
 App.use(require('body-parser').json());
-var DatabaseURL = 'mongodb://admin:password@ds035448.mongolab.com:35448/lou-test'
+
+var DatabaseURL = 'mongodb://<username>:<password>@<mongodb_host>';
 var Jammin = require('../rest-api.js')
 var API = new Jammin(DatabaseURL);
 
