@@ -51,7 +51,12 @@ API.pet.get('/pets/{id}');
 
 // Searches pets by name
 API.pet.getMany('/search/pets', {
-  parameters: [{name: 'q', in: 'query', type: 'string'}]
+  swagger: {
+    description: "Search all pets by name",
+    parameters: [
+      {name: 'q', in: 'query', type: 'string', description: 'Any regex'}
+    ]
+  }
 }, function(req, res, next) {
   var userQuery = Util._extend({}, req.query);
   req.query = {
