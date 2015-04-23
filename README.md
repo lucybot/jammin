@@ -73,7 +73,14 @@ var App = require('express')();
 
 var DatabaseURL = 'mongodb://<username>:<password>@<mongodb_host>';
 var Jammin = require('jammin')
-var API = new Jammin(DatabaseURL);
+var API = new Jammin({
+  databaseURL: DatabaseURL,
+  swagger: {
+    info: {title: 'Pet Store'},
+    host: 'api.example.com',
+    basePath: '/api'
+  }
+});
 
 // Jammin.Schema is an alias for Mongoose.Schema
 var UserSchema = new Jammin.Schema({
