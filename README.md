@@ -58,6 +58,10 @@ API.pet.getMany('/search/pets', function(req, res, next) {
 })
 ```
 
+### Swagger
+Jammin will serve a (Swagger)[http://swagger.io] specification at the specified path
+API.swagger('/swagger.json');
+
 ## Extended Usage
 
 ```js
