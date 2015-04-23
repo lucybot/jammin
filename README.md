@@ -28,25 +28,25 @@ App.listen(3000);
 ```
 
 ### GET
-Jammin will use ```req.params``` and ```req.query``` to find an item the database.
+Jammin will use ```req.params``` and ```req.query``` to **find an item** the database.
 ```js
 API.pet.get('/pet/{name}');
 ```
 
 ### POST
-Jammin will use ```req.body``` to create a new item in the database.
+Jammin will use ```req.body``` to **create a new item** in the database.
 ```js
 API.pet.post('/pet');
 ```
 
 ### PUT
-Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to update that item.
+Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item**.
 ```js
 API.pet.put('/pet/{name}');
 ```
 
 ### DELETE
-Jammin will use ```req.params``` and ```req.query``` to remove an item from the database.
+Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
 ```js
 API.pet.delete('/pet/{name}');
 ```
