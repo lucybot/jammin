@@ -2,7 +2,7 @@
 
 ```npm install jammin```
 
-** Note: Jammin is still in alpha. Not all features have been implemented. **
+__ Note: Jammin is still in alpha. Not all features have been implemented. __
 
 Jammin' is the fastest way to build a JSON REST API with Node, Express, and MongoDB. It consists of a light-weight wrapper around Mongoose and an Express router to expose HTTP methods.
 
