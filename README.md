@@ -22,31 +22,33 @@ API.define('pet', PetSchema)
 ```
 
 ### GET
-Jammin will use req.params and req.query to find an item the database.
+Jammin will use ```req.params``` and ```req.query``` to find an item the database.
 ```js
 API.pet.get('/pet/{name}');
 ```
 
 ### POST
-Jammin will use req.body to create a new item in the database.
+Jammin will use ```req.body``` to create a new item in the database.
 ```js
 API.pet.post('/pet');
 ```
 
 ### PUT
-Jammin will use req.params and req.query to find an item in the database, and use req.body to update that item.
+Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to update that item.
 ```js
 API.pet.put('/pet/{name}');
 ```
 
 ### DELETE
-Jammin will use req.params and req.query to remove an item from the database.
+Jammin will use ```req.params``` and ```req.query``` to remove an item from the database.
 ```js
 API.pet.delete('/pet/{name}');
 ```
 
 ### Middleware
-You can use middleware to intercept Jammin requests, alter req.params/query/body, perform authentication, etc.
+You can use middleware to intercept Jammin requests, alter the request, perform authentication, etc.
+The example below alters ```req.query``` to construct a complex Mongo query from user inputs.
+```js
 // Searches pets by name using parameter 'q', e.g. GET api.pets.com/search/pets?q=fido
 API.pet.getMany('/search/pets', function(req, res, next) {
   req.query = {
@@ -54,6 +56,7 @@ API.pet.getMany('/search/pets', function(req, res, next) {
   };
   next();
 })
+```
 
 ## Extended Usage
 
