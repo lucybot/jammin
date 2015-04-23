@@ -59,7 +59,7 @@ API.pet.getMany('/search/pets', function(req, res, next) {
 ```
 
 ### Swagger
-Jammin will serve a (Swagger)[http://swagger.io] specification at the specified path
+Serve a [Swagger specification](http://swagger.io) for your API at the specified path. You can use this to document your API via [Swagger UI](https://github.com/swagger-api/swagger-ui) or [a LucyBot portal](https://lucybot.com)
 API.swagger('/swagger.json');
 
 ## Extended Usage
