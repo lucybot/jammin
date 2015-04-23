@@ -1,7 +1,6 @@
 var FS = require('fs');
 var Hash = require('password-hash');
 var App = require('express')();
-App.use(require('body-parser').json());
 
 var DatabaseURL = JSON.parse(FS.readFileSync('./creds/mongo.json', 'utf8')).url;
 var Jammin = require('../index.js')

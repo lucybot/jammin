@@ -4,9 +4,9 @@
 
 ** Note: Jammin is still in alpha. Not all features have been implemented. **
 
-Jammin' is the fastest way to build a JSON REST API with Node, Express, and MongoDB.
+Jammin' is the fastest way to build a JSON REST API with Node, Express, and MongoDB. It consists of a light-weight wrapper around Mongoose and an Express router to expose HTTP methods.
 
-Jammin' is a light-weight wrapper around Mongoose
+Jammin supports HTTP verbs GET, PUT, POST, and DELETE. By default, Jammin will use req.query and req.params for GET and DELETE requests, and will use 
 
 ## Example Usage
 
@@ -14,7 +14,6 @@ Jammin' is a light-weight wrapper around Mongoose
 
 var Hash = require('password-hash');
 var App = require('express')();
-App.use(require('body-parser').json());
 
 var DatabaseURL = 'mongodb://<username>:<password>@<mongodb_host>';
 var Jammin = require('../rest-api.js')
@@ -56,6 +55,25 @@ API.pet.getMany('/search/pets', {
   };
   next();
 })
+
+// Middleware for authenticating the request
+var authenticateUser = function(req, res, next) {
+  var query = {
+    username: req.headers['username'],
+  };
+  API.user.db.findOne(query, function(err, user) {
+    if (err) {
+      res.status(500).json({error: err.toString()})
+    } else if (!user) {
+      res.status(401).json({error: "Unknown user:" + query.username});
+    } else if (!Hash.verify(req.headers['password'], user.password_hash)) {
+      res.status(401).json({error: "Invalid password for " + query.username}) 
+    } else {
+      req.user = user;
+      next();
+    }
+  }) 
+}
 
 // Creates a new pet
 API.pet.post('/pets', authenticateUser, function(req, res, next) {

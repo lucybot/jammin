@@ -1,11 +1,13 @@
 var Mongoose = require('mongoose');
 var Express = require('express');
+var BodyParser = require('body-parser');
 
 var SELECT = '-_id -__v'
 
 var API = function(options) {
   if (typeof options === 'string') options =  {databaseURL: options};
   this.router = Express.Router();
+  this.router.use(BodyParser.json());
   this.mongoose = Mongoose.createConnection(options.databaseURL);
 }
 module.exports = API;
