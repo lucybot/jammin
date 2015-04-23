@@ -52,7 +52,7 @@ API.pet.delete('/pet/{name}');
 ```
 
 ### Middleware
-You can use middleware to intercept Jammin requests, alter the request, perform authentication, etc.
+You can use middleware to intercept database calls, alter the request, perform authentication, etc.
 The example below alters ```req.query``` to construct a complex Mongo query from user inputs.
 ```js
 // Searches pets by name using parameter 'q', e.g. GET api.pets.com/search/pets?q=fido
@@ -127,7 +127,9 @@ API.user.post('/user', function(req, res, next) {
 
 // Searches pets by name
 API.pet.getMany('/search/pets', {
-  parameters: [{name: 'q', in: 'query', type: 'string'}]
+  swagger: {
+    parameters: [{name: 'q', in: 'query', type: 'string'}]
+  }
 }, function(req, res, next) {
   var userQuery = Util._extend({}, req.query);
   req.query = {
