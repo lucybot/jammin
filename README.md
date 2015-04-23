@@ -12,7 +12,7 @@ Jammin' is the fastest way to build a JSON REST API with Node, Express, and Mong
 
 ```js
 var Jammin = require('jammin');
-var API = new Jammin(DatabaseURL);
+var API = new Jammin('mongodb://<username>:<password>@<mongodb_host>');
 
 var PetSchema = new Jammin.Schema({
   name: String
