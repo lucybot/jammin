@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "description": "REST API Generator using Express and Mongoose",
   "main": "index.js",
-  "repository" : {
-     "type" : "git",
-     "url" : "https://github.com/lucybot/jammin.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucybot/jammin.git"
   },
   "dependencies": {
     "body-parser": "^1.12.3",

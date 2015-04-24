@@ -25,17 +25,17 @@ var API = new Jammin({
   }
 });
 
-var UserSchema = new Jammin.Schema({
+var UserSchema = {
   username: {type: String, required: true, unique: true, match: /^\w+$/},
   password_hash: {type: String, required: true},
-})
+}
 
-var PetSchema = new Jammin.Schema({
+var PetSchema = {
   id: {type: Number, required: true, unique: true},
   name: String,
   owner: String,
   animalType: {type: String, default: 'unknown'}
-})
+}
 
 var authenticateUser = function(req, res, next) {
   var query = {
@@ -94,29 +94,23 @@ API.pet.postMany('/pets', authenticateUser, function(req, res, next) {
   next();
 });
 
-// Changes a pet.
-API.pet.patch('/pets/{id}', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
+// Setting req.query.owner ensures that only the logged-in user's
+// pets will be returned by any queries Jammin makes to the DB.
+var enforceOwnership = function(req, res, next) {
+  req.query.owner = req.user.owner;
   next();
-})
+}
+
+// Changes a pet.
+API.pet.patch('/pets/{id}', authenticateUser, enforceOwnership);
 
 // Changes every pet that matches the query.
-API.pet.patchMany('/pets', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
-})
+API.pet.patchMany('/pets', authenticateUser, enforceOwnership);
 
 // Deletes a pet by ID.
-API.pet.delete('/pets/{id}', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
-});
+API.pet.delete('/pets/{id}', authenticateUser, enforceOwnership);
 
 // Deletes every pet that matches the query.
-API.pet.deleteMany('/pets', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
-})
+API.pet.deleteMany('/pets', authenticateUser, enforceOwnership);
 
 App.use('/api', API.router);
-
