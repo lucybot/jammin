@@ -12,7 +12,7 @@
     "chai": "^2.2.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/petstore.js"
   },
   "author": "Bobby Brennan <bobby@lucybot.com> (https://lucybot.com/)",
   "license": "ISC"

@@ -1,122 +1,237 @@
-var FS = require('fs');
-var Hash = require('password-hash');
-var App = require('express')();
+var Request = require('request');
+var Expect = require('chai').expect;
+var Petstore = require('./petstore-server.js');
 
-module.exports.listen = function(port) {
-  App.listen(port || 3000);
-}
+var BASE_URL = 'http://127.0.0.1:3000/api';
 
-module.exports.dropAllEntries = function(callback) {
-  API.pet.db.remove({}, function(err) {
-    API.user.db.remove({}, function(err) {
-      callback();
-    })
-  })
-}
+var USER_1 = {username: 'user1', password: 'jabberwocky'}
+var USER_2 = {username: 'user2', password: 'cabbagesandkings'}
 
-var DatabaseURL = JSON.parse(FS.readFileSync('./creds/mongo.json', 'utf8')).url;
-var Jammin = require('../index.js')
-var API = new Jammin({
-  databaseURL: DatabaseURL,
-  swagger: {
-    info: {title: 'Pet Store'},
-    host: 'api.example.com',
-    basePath: '/api'
-  }
-});
-
-var UserSchema = new Jammin.Schema({
-  username: {type: String, required: true, unique: true, match: /^\w+$/},
-  password_hash: {type: String, required: true},
-})
-
-var PetSchema = new Jammin.Schema({
-  id: {type: Number, required: true, unique: true},
-  name: String,
-  owner: String,
-  animalType: {type: String, default: 'unknown'}
-})
-
-var authenticateUser = function(req, res, next) {
-  var query = {
-    username: req.headers['username'],
-  };
-  API.user.db.findOne(query, function(err, user) {
-    if (err) {
-      res.status(500).json({error: err.toString()})
-    } else if (!user) {
-      res.status(401).json({error: "Unknown user:" + query.username});
-    } else if (!Hash.verify(req.headers['password'], user.password_hash)) {
-      res.status(401).json({error: "Invalid password for " + query.username}) 
+var successResponse = function(expectedBody, done) {
+  return function(err, res, body) {
+    if (body.error) console.log(body.error);
+    Expect(err).to.equal(null);
+    Expect(res.statusCode).to.equal(200);
+    Expect(body.error).to.equal(undefined);
+    if (!expectedBody) {
+      Expect(body.success).to.equal(true);
     } else {
-      req.user = user;
-      next();
+      Expect(body).to.deep.equal(expectedBody);
     }
-  }) 
+    done();
+  }
 }
 
-API.define('pet', PetSchema);
-API.define('user', UserSchema);
-
-// Creates a new user.
-API.user.post('/user', function(req, res, next) {
-  req.body.password_hash = Hash.generate(req.body.password);
-  next();
-});
-
-// Gets a pet by id.
-API.pet.get('/pets/{id}');
-
-// Gets an array of pets that match the query.
-API.pet.getMany('/pets');
-
-// Searches pets by name
-API.pet.getMany('/search/pets', {
-  swagger: {
-    description: "Search all pets by name",
-    parameters: [
-      {name: 'q', in: 'query', type: 'string', description: 'Any regex'}
-    ]
+var failResponse = function(statusCode, done) {
+  return function(err, res, body) {
+    Expect(err).to.equal(null);
+    Expect(res.statusCode).to.equal(statusCode);
+    Expect(body.error).to.not.equal(null);
+    done();
   }
-}, function(req, res, next) {
-  req.query = {
-    name: { "$regex": new RegExp(req.query.q) }
-  };
-  next();
-})
+}
 
-// Creates one or more new pets.
-API.pet.postMany('/pets', authenticateUser, function(req, res, next) {
-  if (!Array.isArray(req.body)) req.body = [req.body];
-  req.body.forEach(function(pet) {
-    pet.owner = req.user.username;
+describe('Petstore', function() {
+  before(function(done) {
+    Petstore.listen(3000);
+    done();
   });
-  next();
-});
 
-// Changes a pet.
-API.pet.put('/pets/{id}', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
+  after(function(done) {
+    Petstore.dropAllEntries(done);
+  })
+
+  it('should allow new users', function(done) {
+    Request.post({
+      url: BASE_URL + '/user',
+      body: USER_1,
+      json: true
+    }, successResponse(null, done));
+  });
+
+  it('should not allow duplicate user names', function(done) {
+    Request.post({
+      url: BASE_URL + '/user',
+      body: USER_1,
+      json: true
+    }, failResponse(500, done));
+  })
+
+  it('should allow a second user', function(done) {
+    Request.post({
+      url: BASE_URL + '/user',
+      body: USER_2,
+      json: true
+    }, successResponse(null, done));
+  })
+
+  it('should allow new pets', function(done) {
+    Request.post({
+      url: BASE_URL + '/pets',
+      body: {id: 42, name: 'Lucy'},
+      headers: USER_1,
+      json: true
+    }, successResponse(null, done));
+  })
+
+  it('should allow a second pet', function(done) {
+    Request.post({
+      url: BASE_URL + '/pets',
+      body: {id: 43, name: 'Goose'},
+      headers: USER_2,
+      json: true
+    }, successResponse(null, done));
+  })
+
+  it('should not allow modifications from wrong user', function(done) {
+    Request({
+      method: 'put',
+      url: BASE_URL + '/pets/42',
+      headers: USER_2,
+      json: true
+    }, failResponse(404, done)); // TODO: should be 401
+  })
+
+  it('should allow modifications to pet', function(done) {
+    Request({
+      method: 'put',
+      url: BASE_URL + '/pets/42',
+      headers: USER_1,
+      body: {name: 'Loosey'},
+      json: true
+    }, successResponse({
+        id: 42,
+        name: "Loosey",
+        animalType: "unknown",
+        owner: USER_1.username
+    }, done));
+  })
+
+  it('should allow searching', function(done) {
+    Request.get({
+      url: BASE_URL + '/search/pets',
+      qs: {q: 'oos'},
+      json: true
+    }, successResponse([
+      {id: 42, name: "Loosey", owner: USER_1.username, animalType: "unknown"},
+      {id: 43, name: "Goose", owner: USER_2.username, animalType: "unknown"}
+    ], done))
+  })
+
+  it('should not allow duplicate pets', function(done) {
+    Request.post({
+      url: BASE_URL + '/pets',
+      body: {id: 42, name: 'Goose'},
+      headers: USER_1,
+      json: true
+    }, failResponse(500, done))
+  })
+
+  it('should not allow new pets without auth', function(done) {
+    Request.post({
+      url: BASE_URL + '/pets',
+      body: {id: 43, name: 'Goose'},
+      json: true
+    }, failResponse(401, done));
+  })
+
+  it('should not allow deletes without auth', function(done) {
+    Request({
+      method: 'delete',
+      url: BASE_URL + '/pets/42',
+      json: true
+    }, failResponse(401, done));
+  })
+
+  it('should not allow deletes from wrong user', function(done) {
+    Request({
+      method: 'delete',
+      url: BASE_URL + '/pets/42',
+      headers: USER_2,
+      json: true
+    }, failResponse(404, done)); // TODO: should return 401
+  })
+
+  it('should not allow deletes with wrong password', function(done) {
+    Request({
+      method: 'delete',
+      url: BASE_URL + '/pets/42',
+      headers: {
+        username: USER_1.username,
+        password: USER_2.password
+      },
+      json: true
+    }, failResponse(401, done));
+  })
+
+  it('should allow deletes from owner', function(done) {
+    Request({
+      method: 'delete',
+      url: BASE_URL + '/pets/42',
+      headers: USER_1,
+      json: true
+    }, successResponse(null, done));
+  })
+
+  it('should allow batched adds of pets', function(done) {
+    Request.post({
+      url: BASE_URL + '/pets',
+      headers: USER_1,
+      body: [{
+        id: 1,
+        name: "Pet1",
+        animalType: "cat",
+      }, {
+        id: 2,
+        name: "Pet2",
+        animalType: "cat",
+      }, {
+        id: 3,
+        name: "Pet3",
+        animalType: "cat",
+      }],
+      json: true
+    }, successResponse(null, done))
+  })
+
+  it('should allow batched modification of pets', function(done) {
+    Request({
+      method: 'put',
+      url: BASE_URL + '/pets',
+      headers: USER_1,
+      qs: {
+        animalType: 'cat'
+      },
+      body: {
+        animalType: 'dog'
+      },
+      json: true
+    }, successResponse(null, done))
+  })
+
+  it('should reflect batched modification', function(done) {
+    Request.get({
+      url: BASE_URL + '/pets',
+      qs: {
+        animalType: 'dog'
+      },
+      json: true
+    }, successResponse([
+        {id: 1, name: "Pet1", owner: USER_1.username, animalType: 'dog'},
+        {id: 2, name: "Pet2", owner: USER_1.username, animalType: 'dog'},
+        {id: 3, name: "Pet3", owner: USER_1.username, animalType: 'dog'},
+    ], done))
+  })
+
+  it('should allow batched deletes of pets', function(done) {
+    Request({
+      method: 'delete',
+      url: BASE_URL + '/pets',
+      headers: USER_1,
+      qs: {
+        animalType: "dog"
+      },
+      json: true
+    }, successResponse(null, done))
+  })
 })
-
-// Changes every pet that matches the query.
-API.pet.putMany('/pets', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
-})
-
-// Deletes a pet by ID.
-API.pet.delete('/pets/{id}', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
-});
-
-// Deletes every pet that matches the query.
-API.pet.deleteMany('/pets', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
-})
-
-App.use('/api', API.router);
-
