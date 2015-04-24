@@ -87,7 +87,7 @@ API.pet.getMany('/search/pets', function(req, res, next) {
 })
 ```
 
-### Swagger
+### Swagger ```TODO```
 Serve a [Swagger specification](http://swagger.io) for your API at the specified path. You can use this to document your API via [Swagger UI](https://github.com/swagger-api/swagger-ui) or a [LucyBot portal](https://lucybot.com)
 ```js
 API.swagger('/swagger.json');
