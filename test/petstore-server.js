@@ -95,13 +95,13 @@ API.pet.postMany('/pets', authenticateUser, function(req, res, next) {
 });
 
 // Changes a pet.
-API.pet.put('/pets/{id}', authenticateUser, function(req, res, next) {
+API.pet.patch('/pets/{id}', authenticateUser, function(req, res, next) {
   req.query.owner = req.user.username;
   next();
 })
 
 // Changes every pet that matches the query.
-API.pet.putMany('/pets', authenticateUser, function(req, res, next) {
+API.pet.patchMany('/pets', authenticateUser, function(req, res, next) {
   req.query.owner = req.user.username;
   next();
 })

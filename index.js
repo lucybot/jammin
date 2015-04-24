@@ -62,7 +62,7 @@ var getRouteFunction = function(method, many) {
           if (err) res.status(500).json({error: err.toString()})
           else res.json({success: true})
         })
-      } else if (method === 'put') {
+      } else if (method === 'patch') {
         if (many) {
           self.db.update(query, req.body, {multi: true}).select(SELECT).exec(function(err) {
             if (err) res.status(500).json({error: err.toString()});
@@ -94,7 +94,7 @@ var getRouteFunction = function(method, many) {
   }
 }
 
-var methods = ['get', 'put', 'post', 'delete'];
+var methods = ['get', 'patch', 'post', 'delete'];
 methods.forEach(function(method) {
   Definition.prototype[method] = getRouteFunction(method);
   Definition.prototype[method + 'Many'] = getRouteFunction(method, true)

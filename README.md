@@ -55,14 +55,14 @@ Use ```postMany``` to accept an array of items to be created.
 API.pet.postMany('/pets');
 ```
 
-### PUT
+### PATCH
 Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item**.
 ```js
-API.pet.put('/pets/{name}');
+API.pet.patch('/pets/{name}');
 ```
-Use ```putMany``` to update every matching item in the database.
+Use ```patchMany``` to update every matching item in the database.
 ```js
-API.pet.putMany('/pets');
+API.pet.patchMany('/pets');
 ```
 
 ### DELETE

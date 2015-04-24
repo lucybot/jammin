@@ -85,7 +85,7 @@ describe('Petstore', function() {
 
   it('should not allow modifications from wrong user', function(done) {
     Request({
-      method: 'put',
+      method: 'patch',
       url: BASE_URL + '/pets/42',
       headers: USER_2,
       json: true
@@ -94,7 +94,7 @@ describe('Petstore', function() {
 
   it('should allow modifications to pet', function(done) {
     Request({
-      method: 'put',
+      method: 'patch',
       url: BASE_URL + '/pets/42',
       headers: USER_1,
       body: {name: 'Loosey'},
@@ -196,7 +196,7 @@ describe('Petstore', function() {
 
   it('should allow batched modification of pets', function(done) {
     Request({
-      method: 'put',
+      method: 'patch',
       url: BASE_URL + '/pets',
       headers: USER_1,
       qs: {
