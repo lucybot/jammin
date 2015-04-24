@@ -16,15 +16,23 @@ var Jammin = require('jammin');
 var API = new Jammin('mongodb://<username>:<password>@<mongodb_host>');
 
 var PetSchema = new Jammin.Schema({
-  name: String
+  name: String,
+  age: Number
 });
 
 API.define('pet', PetSchema);
-API.pet.get('/pets');
+API.pet.get('/pets/{name}');
 API.pet.put('/pets');
 
 App.use('/api', API);
 App.listen(3000);
+```
+
+```bash
+> curl -X POST 127.0.0.1:3000/pets -d '{"name": "Lucy", "age": 2}'
+{"success": true}
+> curl 127.0.0.1:3000/pets/Lucy
+{"name": "Lucy", "age": 2}
 ```
 
 ### GET
