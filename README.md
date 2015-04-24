@@ -111,17 +111,9 @@ var API = new Jammin({
 var FS = require('fs');
 var Hash = require('password-hash');
 var App = require('express')();
+var Jammin = require('jammin');
 
-module.exports.dropAllEntries = function(callback) {
-  API.pet.db.remove({}, function(err) {
-    API.user.db.remove({}, function(err) {
-      callback();
-    })
-  })
-}
-
-var DatabaseURL = JSON.parse(FS.readFileSync('./creds/mongo.json', 'utf8')).url;
-var Jammin = require('../index.js')
+var DatabaseURL = 'mongodb://<username>:<password>@<mongodb_host>';
 var API = new Jammin({
   databaseURL: DatabaseURL,
   swagger: {
