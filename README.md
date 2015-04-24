@@ -44,19 +44,19 @@ API.pet.get('/pet/{name}');
 ### POST
 Jammin will use ```req.body``` to **create a new item** in the database.
 ```js
-API.pet.post('/pet');
+API.pet.post('/pets');
 ```
 
 ### PUT
 Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item**.
 ```js
-API.pet.put('/pet/{name}');
+API.pet.put('/pets/{name}');
 ```
 
 ### DELETE
 Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
 ```js
-API.pet.delete('/pet/{name}');
+API.pet.delete('/pets/{name}');
 ```
 
 ### Middleware
