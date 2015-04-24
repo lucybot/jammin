@@ -3,6 +3,14 @@ var Express = require('express');
 var BodyParser = require('body-parser');
 
 var SELECT = '-_id -__v'
+var FIELDS = {};
+SELECT.split(' ').forEach(function(field) {
+  if (field.indexOf('-') === 0) {
+    FIELDS[field.substring(1)] = false;
+  } else {
+    FIELDS[field] = true;
+  }
+})
 
 var API = function(options) {
   if (typeof options === 'string') options =  {databaseURL: options};
@@ -42,24 +50,34 @@ var getRouteFunction = function(method, many) {
         query[key] = req.params[key];
       }
       if (method === 'get') {
-        self.db.findOne(query).select(SELECT).exec(function(err, thing) {
+        var find = many ? self.db.find : self.db.findOne;
+        find.apply(self.db, [query, SELECT]).exec(function(err, thing) {
           if (err) res.status(500).json({error: err.toString()})
           else if (!thing) res.status(404).json({error: 'Not Found'})
           else res.json(thing);
         })
       } else if (method === 'post') {
-        var newThing = new self.db(req.body);
-        newThing.save(function(err) {
+        var docs = many ? req.body : [req.body];
+        self.db.collection.insert(docs, function(err, docs) {
           if (err) res.status(500).json({error: err.toString()})
-          else res.json({success: true});
+          else res.json({success: true})
         })
       } else if (method === 'put') {
-        self.db.findOneAndUpdate.select(SELECT).exec(query, req.body, function(err, thing) {
-          if (err) res.status(500).json({error: err.toString()});
-          else res.json(thing);
-        })
+        if (many) {
+          self.db.update(query, req.body, {multi: true}).select(SELECT).exec(function(err) {
+            if (err) res.status(500).json({error: err.toString()});
+            else res.json({success: true});
+          })
+        } else {
+          self.db.findOneAndUpdate(query, req.body, {new: true}).select(SELECT).exec(function(err, thing) {
+            if (err) res.status(500).json({error: err.toString()});
+            else if (!thing) res.status(404).json({error: 'Not Found'});
+            else res.json(thing);
+          });
+        }
       } else if (method === 'delete') {
-        self.db.findOneAndRemove(query, function(err, thing) {
+        var remove = many ? self.db.remove : self.db.findOneAndRemove;
+        remove.apply(self.db, [query]).exec(function(err, thing) {
           if (err) res.status(500).json({error: err.toString()});
           else if (!thing) res.status(404).json({error: 'Not Found'});
           else res.json({success: true});

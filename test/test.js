@@ -9,13 +9,14 @@ var USER_2 = {username: 'user2', password: 'cabbagesandkings'}
 
 var successResponse = function(expectedBody, done) {
   return function(err, res, body) {
+    if (body.error) console.log(body.error);
     Expect(err).to.equal(null);
     Expect(res.statusCode).to.equal(200);
     Expect(body.error).to.equal(undefined);
     if (!expectedBody) {
       Expect(body.success).to.equal(true);
     } else {
-      Expect(body).to.equal(expectedBody);
+      Expect(body).to.deep.equal(expectedBody);
     }
     done();
   }
@@ -73,6 +74,50 @@ describe('Petstore', function() {
     }, successResponse(null, done));
   })
 
+  it('should allow a second pet', function(done) {
+    Request.post({
+      url: BASE_URL + '/pets',
+      body: {id: 43, name: 'Goose'},
+      headers: USER_2,
+      json: true
+    }, successResponse(null, done));
+  })
+
+  it('should not allow modifications from wrong user', function(done) {
+    Request({
+      method: 'put',
+      url: BASE_URL + '/pets/42',
+      headers: USER_2,
+      json: true
+    }, failResponse(404, done)); // TODO: should be 401
+  })
+
+  it('should allow modifications to pet', function(done) {
+    Request({
+      method: 'put',
+      url: BASE_URL + '/pets/42',
+      headers: USER_1,
+      body: {name: 'Loosey'},
+      json: true
+    }, successResponse({
+        id: 42,
+        name: "Loosey",
+        animalType: "unknown",
+        owner: USER_1.username
+    }, done));
+  })
+
+  it('should allow searching', function(done) {
+    Request.get({
+      url: BASE_URL + '/search/pets',
+      qs: {q: 'oos'},
+      json: true
+    }, successResponse([
+      {id: 42, name: "Loosey", owner: USER_1.username, animalType: "unknown"},
+      {id: 43, name: "Goose", owner: USER_2.username, animalType: "unknown"}
+    ], done))
+  })
+
   it('should not allow duplicate pets', function(done) {
     Request.post({
       url: BASE_URL + '/pets',
@@ -126,5 +171,67 @@ describe('Petstore', function() {
       headers: USER_1,
       json: true
     }, successResponse(null, done));
+  })
+
+  it('should allow batched adds of pets', function(done) {
+    Request.post({
+      url: BASE_URL + '/pets',
+      headers: USER_1,
+      body: [{
+        id: 1,
+        name: "Pet1",
+        animalType: "cat",
+      }, {
+        id: 2,
+        name: "Pet2",
+        animalType: "cat",
+      }, {
+        id: 3,
+        name: "Pet3",
+        animalType: "cat",
+      }],
+      json: true
+    }, successResponse(null, done))
+  })
+
+  it('should allow batched modification of pets', function(done) {
+    Request({
+      method: 'put',
+      url: BASE_URL + '/pets',
+      headers: USER_1,
+      qs: {
+        animalType: 'cat'
+      },
+      body: {
+        animalType: 'dog'
+      },
+      json: true
+    }, successResponse(null, done))
+  })
+
+  it('should reflect batched modification', function(done) {
+    Request.get({
+      url: BASE_URL + '/pets',
+      qs: {
+        animalType: 'dog'
+      },
+      json: true
+    }, successResponse([
+        {id: 1, name: "Pet1", owner: USER_1.username, animalType: 'dog'},
+        {id: 2, name: "Pet2", owner: USER_1.username, animalType: 'dog'},
+        {id: 3, name: "Pet3", owner: USER_1.username, animalType: 'dog'},
+    ], done))
+  })
+
+  it('should allow batched deletes of pets', function(done) {
+    Request({
+      method: 'delete',
+      url: BASE_URL + '/pets',
+      headers: USER_1,
+      qs: {
+        animalType: "dog"
+      },
+      json: true
+    }, successResponse(null, done))
   })
 })

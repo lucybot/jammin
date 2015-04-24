@@ -33,9 +33,8 @@ var UserSchema = new Jammin.Schema({
 var PetSchema = new Jammin.Schema({
   id: {type: Number, required: true, unique: true},
   name: String,
-  owner: {type: Jammin.Schema.ObjectId, ref: 'User'},
-  animalType: String,
-  imageURLs: [String]
+  owner: String,
+  animalType: {type: String, default: 'unknown'}
 })
 
 var authenticateUser = function(req, res, next) {
@@ -59,14 +58,17 @@ var authenticateUser = function(req, res, next) {
 API.define('pet', PetSchema);
 API.define('user', UserSchema);
 
-// Creates a new user
+// Creates a new user.
 API.user.post('/user', function(req, res, next) {
   req.body.password_hash = Hash.generate(req.body.password);
   next();
 });
 
-// Gets a pet by id
+// Gets a pet by id.
 API.pet.get('/pets/{id}');
+
+// Gets an array of pets that match the query.
+API.pet.getMany('/pets');
 
 // Searches pets by name
 API.pet.getMany('/search/pets', {
@@ -77,28 +79,44 @@ API.pet.getMany('/search/pets', {
     ]
   }
 }, function(req, res, next) {
-  var userQuery = Util._extend({}, req.query);
   req.query = {
-    name: { "$regex": new RegExp(userQuery.q) }
+    name: { "$regex": new RegExp(req.query.q) }
   };
   next();
 })
 
-// Creates a new pet
-API.pet.post('/pets', authenticateUser, function(req, res, next) {
-  req.body.owner = req.user._id;
+// Creates one or more new pets.
+API.pet.postMany('/pets', authenticateUser, function(req, res, next) {
+  if (!Array.isArray(req.body)) req.body = [req.body];
+  req.body.forEach(function(pet) {
+    pet.owner = req.user.username;
+  });
   next();
 });
 
-// Delete's a pet.
+// Changes a pet.
+API.pet.put('/pets/{id}', authenticateUser, function(req, res, next) {
+  req.query.owner = req.user.username;
+  next();
+})
+
+// Changes every pet that matches the query.
+API.pet.putMany('/pets', authenticateUser, function(req, res, next) {
+  req.query.owner = req.user.username;
+  next();
+})
+
+// Deletes a pet by ID.
 API.pet.delete('/pets/{id}', authenticateUser, function(req, res, next) {
-  req.query = {
-    id: req.params.id,
-    // By setting 'owner', we ensure the user can only delete his own pets.
-    owner: req.user._id
-  };
+  req.query.owner = req.user.username;
   next();
 });
+
+// Deletes every pet that matches the query.
+API.pet.deleteMany('/pets', authenticateUser, function(req, res, next) {
+  req.query.owner = req.user.username;
+  next();
+})
 
 App.use('/api', API.router);
 
