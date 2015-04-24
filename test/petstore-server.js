@@ -97,7 +97,7 @@ API.pet.postMany('/pets', authenticateUser, function(req, res, next) {
 // Setting req.query.owner ensures that only the logged-in user's
 // pets will be returned by any queries Jammin makes to the DB.
 var enforceOwnership = function(req, res, next) {
-  req.query.owner = req.user.owner;
+  req.query.owner = req.user.username;
   next();
 }
 
