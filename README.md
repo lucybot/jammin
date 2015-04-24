@@ -2,6 +2,7 @@
 ```npm install jammin```
 
 **Note: Jammin is still in alpha. Not all features have been implemented.**
+
 *Unimplemented features are tagged with ```TODO```*
 
 ## About
