@@ -38,11 +38,19 @@ Jammin will use ```req.params``` and ```req.query``` to **find an item** the dat
 ```js
 API.pet.get('/pet/{name}');
 ```
+Use ```getMany``` to return an array of matching documents.
+```js
+API.pet.getMany('/pet')
+```
 
 ### POST
 Jammin will use ```req.body``` to **create a new item** in the database.
 ```js
 API.pet.post('/pets');
+```
+Use ```postMany``` to accept an array of items to be created.
+```js
+API.pet.postMany('/pets');
 ```
 
 ### PUT
@@ -50,11 +58,19 @@ Jammin will use ```req.params``` and ```req.query``` to find an item in the data
 ```js
 API.pet.put('/pets/{name}');
 ```
+Use ```putMany``` to update every matching item in the database.
+```js
+API.pet.putMany('/pets');
+```
 
 ### DELETE
 Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
 ```js
 API.pet.delete('/pets/{name}');
+```
+Use deleteMany to delete every matching item in the database.
+```js
+API.pet.deleteMany('/pets');
 ```
 
 ### Middleware
