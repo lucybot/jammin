@@ -1,55 +1,66 @@
-# We be Jammin'
-
 ## Installation
 ```npm install jammin```
 
 **Note: Jammin is still in alpha. Not all features have been implemented.**
 
 ## About
-Jammin' is the fastest way to build a JSON REST API with Node, Express, and MongoDB. It consists of a light-weight wrapper around Mongoose and an Express router to expose HTTP methods.
+Jammin is the fastest way to build a JSON REST API with Node, Express, and MongoDB. It consists of a light-weight wrapper around [Mongoose](http://mongoosejs.com/) for database operations and an [Express](http://expressjs.com/) router to expose HTTP methods.
 
 ## Usage
 
 ```js
+var App = require('express')();
 var Jammin = require('jammin');
 var API = new Jammin('mongodb://<username>:<password>@<mongodb_host>');
 
 var PetSchema = new Jammin.Schema({
-  name: String
+  name: String,
+  age: Number
 });
 
-API.define('pet', PetSchema)
+API.define('pet', PetSchema);
+API.pet.get('/pets/{name}');
+API.pet.post('/pets');
+
+App.use('/api', API);
+App.listen(3000);
+```
+
+```bash
+> curl -X POST 127.0.0.1:3000/pets -d '{"name": "Lucy", "age": 2}'
+{"success": true}
+> curl 127.0.0.1:3000/pets/Lucy
+{"name": "Lucy", "age": 2}
 ```
 
 ### GET
-Jammin will use ```req.params``` and ```req.query``` to find an item the database.
+Jammin will use ```req.params``` and ```req.query``` to **find an item** the database.
 ```js
 API.pet.get('/pet/{name}');
 ```
 
 ### POST
-Jammin will use ```req.body``` to create a new item in the database.
+Jammin will use ```req.body``` to **create a new item** in the database.
 ```js
-API.pet.post('/pet');
+API.pet.post('/pets');
 ```
 
 ### PUT
-Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to update that item.
+Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item**.
 ```js
-API.pet.put('/pet/{name}');
+API.pet.put('/pets/{name}');
 ```
 
 ### DELETE
-Jammin will use ```req.params``` and ```req.query``` to remove an item from the database.
+Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
 ```js
-API.pet.delete('/pet/{name}');
+API.pet.delete('/pets/{name}');
 ```
 
 ### Middleware
-You can use middleware to intercept Jammin requests, alter the request, perform authentication, etc.
+You can use middleware to intercept database calls, alter the request, perform authentication, etc.
 The example below alters ```req.query``` to construct a complex Mongo query from user inputs.
 ```js
-// Searches pets by name using parameter 'q', e.g. GET api.pets.com/search/pets?q=fido
 API.pet.getMany('/search/pets', function(req, res, next) {
   req.query = {
     name: { "$regex": new RegExp(req.query.q) }
@@ -62,6 +73,17 @@ API.pet.getMany('/search/pets', function(req, res, next) {
 Serve a [Swagger specification](http://swagger.io) for your API at the specified path. You can use this to document your API via [Swagger UI](https://github.com/swagger-api/swagger-ui) or a [LucyBot portal](https://lucybot.com)
 ```js
 API.swagger('/swagger.json');
+```
+Jammin will fill out the technical details of your spec, but you can provide additional information:
+```
+var API = new Jammin({
+  databaseURL: DatabaseURL,
+  swagger: {
+    info: {title: 'Pet Store'},
+    host: 'api.example.com',
+    basePath: '/api'
+  }
+});
 ```
 
 ## Extended Usage
@@ -110,7 +132,9 @@ API.user.post('/user', function(req, res, next) {
 
 // Searches pets by name
 API.pet.getMany('/search/pets', {
-  parameters: [{name: 'q', in: 'query', type: 'string'}]
+  swagger: {
+    parameters: [{name: 'q', in: 'query', type: 'string'}]
+  }
 }, function(req, res, next) {
   var userQuery = Util._extend({}, req.query);
   req.query = {
