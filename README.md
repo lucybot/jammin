@@ -1,5 +1,3 @@
-# We be Jammin'
-
 ## Installation
 ```npm install jammin```
 
