@@ -55,7 +55,6 @@ API.pet.delete('/pet/{name}');
 You can use middleware to intercept database calls, alter the request, perform authentication, etc.
 The example below alters ```req.query``` to construct a complex Mongo query from user inputs.
 ```js
-// Searches pets by name using parameter 'q', e.g. GET api.pets.com/search/pets?q=fido
 API.pet.getMany('/search/pets', function(req, res, next) {
   req.query = {
     name: { "$regex": new RegExp(req.query.q) }
