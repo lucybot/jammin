@@ -3,8 +3,10 @@
 
 **Note: Jammin is still in alpha. Not all features have been implemented.**
 
+*Unimplemented features are tagged with ```TODO```*
+
 ## About
-Jammin is the fastest way to build a JSON REST API with Node, Express, and MongoDB. It consists of a light-weight wrapper around [Mongoose](http://mongoosejs.com/) for database operations and an [Express](http://expressjs.com/) router to expose HTTP methods.
+Jammin is the fastest way (that I know of) to build a JSON REST API with Node, Express, and MongoDB. It consists of a light-weight wrapper around [Mongoose](http://mongoosejs.com/) for database operations and an [Express](http://expressjs.com/) router to expose HTTP methods. It is fully extensible via middleware to support things like authentication, resource ownership, and complex queries.
 
 ## Usage
 
@@ -38,11 +40,19 @@ Jammin will use ```req.params``` and ```req.query``` to **find an item** the dat
 ```js
 API.pet.get('/pet/{name}');
 ```
+Use ```getMany``` to return an array of matching documents.
+```js
+API.pet.getMany('/pet')
+```
 
 ### POST
 Jammin will use ```req.body``` to **create a new item** in the database.
 ```js
 API.pet.post('/pets');
+```
+Use ```postMany``` to accept an array of items to be created.
+```js
+API.pet.postMany('/pets');
 ```
 
 ### PUT
@@ -50,11 +60,19 @@ Jammin will use ```req.params``` and ```req.query``` to find an item in the data
 ```js
 API.pet.put('/pets/{name}');
 ```
+Use ```putMany``` to update every matching item in the database.
+```js
+API.pet.putMany('/pets');
+```
 
 ### DELETE
 Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
 ```js
 API.pet.delete('/pets/{name}');
+```
+Use deleteMany to delete every matching item in the database.
+```js
+API.pet.deleteMany('/pets');
 ```
 
 ### Middleware
@@ -69,7 +87,7 @@ API.pet.getMany('/search/pets', function(req, res, next) {
 })
 ```
 
-### Swagger
+### Swagger ```TODO```
 Serve a [Swagger specification](http://swagger.io) for your API at the specified path. You can use this to document your API via [Swagger UI](https://github.com/swagger-api/swagger-ui) or a [LucyBot portal](https://lucybot.com)
 ```js
 API.swagger('/swagger.json');
