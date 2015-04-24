@@ -2,6 +2,18 @@ var FS = require('fs');
 var Hash = require('password-hash');
 var App = require('express')();
 
+module.exports.listen = function(port) {
+  App.listen(port || 3000);
+}
+
+module.exports.dropAllEntries = function(callback) {
+  API.pet.db.remove({}, function(err) {
+    API.user.db.remove({}, function(err) {
+      callback();
+    })
+  })
+}
+
 var DatabaseURL = JSON.parse(FS.readFileSync('./creds/mongo.json', 'utf8')).url;
 var Jammin = require('../index.js')
 var API = new Jammin({
@@ -89,4 +101,4 @@ API.pet.delete('/pets/{id}', authenticateUser, function(req, res, next) {
 });
 
 App.use('/api', API.router);
-App.listen(3000);
+
