@@ -22,7 +22,7 @@ var PetSchema = new Jammin.Schema({
 
 API.define('pet', PetSchema);
 API.pet.get('/pets/{name}');
-API.pet.put('/pets');
+API.pet.post('/pets');
 
 App.use('/api', API);
 App.listen(3000);
