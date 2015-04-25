@@ -127,16 +127,6 @@
             "schema": {
               "$ref": "#/definitions/Pet"
             }
-          },
-          {
-            "name": "username",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -170,16 +160,6 @@
           {
             "name": "animalType",
             "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "username",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "header",
             "type": "string"
           }
         ],
@@ -217,16 +197,6 @@
           {
             "name": "animalType",
             "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "username",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "header",
             "type": "string"
           }
         ],
@@ -290,16 +260,6 @@
                 "$ref": "#/definitions/Pet"
               }
             }
-          },
-          {
-            "name": "username",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -334,16 +294,6 @@
             "name": "animalType",
             "in": "query",
             "type": "string"
-          },
-          {
-            "name": "username",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "header",
-            "type": "string"
           }
         ],
         "responses": {
@@ -377,16 +327,6 @@
           {
             "name": "animalType",
             "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "username",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "header",
             "type": "string"
           }
         ],
