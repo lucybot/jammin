@@ -34,7 +34,7 @@ App.listen(3000);
 ```
 
 ### GET
-Jammin will use ```req.params``` and ```req.query``` to **find an item** the database.
+Jammin will use ```req.params``` and ```req.query``` to **find an item** in the database.
 ```js
 API.pet.get('/pet/{name}');
 ```
