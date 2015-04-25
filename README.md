@@ -18,9 +18,9 @@ var PetSchema = new Jammin.Schema({
   age: Number
 });
 
-API.define('pet', PetSchema);
-API.pet.get('/pets/{name}');
-API.pet.post('/pets');
+API.define('Pet', PetSchema);
+API.Pet.get('/pets/{name}');
+API.Pet.post('/pets');
 
 App.use('/api', API);
 App.listen(3000);
