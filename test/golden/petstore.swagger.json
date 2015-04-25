@@ -1,11 +1,24 @@
 {
   "info": {
-    "title": "Pet Store"
+    "title": "Pet Store",
+    "version": "0.1"
   },
   "host": "api.example.com",
   "basePath": "/api",
+  "securityDefinitions": {
+    "username": {
+      "name": "username",
+      "in": "header",
+      "type": "string"
+    },
+    "password": {
+      "name": "password",
+      "in": "header",
+      "type": "string"
+    }
+  },
   "definitions": {
-    "pet": {
+    "Pet": {
       "type": "object",
       "properties": {
         "id": {
@@ -22,7 +35,7 @@
         }
       }
     },
-    "user": {
+    "User": {
       "type": "object",
       "properties": {
         "username": {
@@ -42,7 +55,6 @@
           {
             "name": "body",
             "in": "body",
-            "type": "object",
             "schema": {
               "properties": {
                 "username": {
@@ -55,7 +67,7 @@
             }
           }
         ],
-        "description": "Adds a user",
+        "description": "Adds a User",
         "responses": {
           "200": {
             "description": "Success"
@@ -65,7 +77,7 @@
     },
     "/pets/{id}": {
       "get": {
-        "description": "Retrieves a pet",
+        "description": "Retrieves a Pet",
         "parameters": [
           {
             "name": "id",
@@ -90,15 +102,55 @@
         ],
         "responses": {
           "200": {
-            "description": "A pet",
+            "description": "A Pet",
             "schema": {
-              "$ref": "#/definitions/pet"
+              "$ref": "#/definitions/Pet"
             }
           }
         }
       },
+      "post": {
+        "security": {
+          "username": [],
+          "password": []
+        },
+        "description": "Adds a Pet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          },
+          {
+            "name": "username",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
       "patch": {
-        "description": "Updates a pet",
+        "security": {
+          "username": [],
+          "password": []
+        },
+        "description": "Updates a Pet",
         "parameters": [
           {
             "name": "id",
@@ -119,19 +171,33 @@
             "name": "animalType",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "username",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "A pet",
+            "description": "A Pet",
             "schema": {
-              "$ref": "#/definitions/pet"
+              "$ref": "#/definitions/Pet"
             }
           }
         }
       },
       "delete": {
-        "description": "Removes a pet",
+        "security": {
+          "username": [],
+          "password": []
+        },
+        "description": "Removes a Pet",
         "parameters": [
           {
             "name": "id",
@@ -151,6 +217,16 @@
           {
             "name": "animalType",
             "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "username",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -163,7 +239,7 @@
     },
     "/pets": {
       "get": {
-        "description": "Retrieves an array of pets",
+        "description": "Retrieves an array of Pets",
         "parameters": [
           {
             "name": "id",
@@ -188,19 +264,44 @@
         ],
         "responses": {
           "200": {
-            "description": "An array of pets",
+            "description": "An array of Pets",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/pet"
+                "$ref": "#/definitions/Pet"
               }
             }
           }
         }
       },
       "post": {
-        "description": "Adds an array of pets",
-        "parameters": [],
+        "security": {
+          "username": [],
+          "password": []
+        },
+        "description": "Adds an array of Pets",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Pet"
+              }
+            }
+          },
+          {
+            "name": "username",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -208,7 +309,11 @@
         }
       },
       "patch": {
-        "description": "Updates an array of pets",
+        "security": {
+          "username": [],
+          "password": []
+        },
+        "description": "Updates an array of Pets",
         "parameters": [
           {
             "name": "id",
@@ -228,6 +333,16 @@
           {
             "name": "animalType",
             "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "username",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -238,7 +353,11 @@
         }
       },
       "delete": {
-        "description": "Removes an array of pets",
+        "security": {
+          "username": [],
+          "password": []
+        },
+        "description": "Removes an array of Pets",
         "parameters": [
           {
             "name": "id",
@@ -258,6 +377,16 @@
           {
             "name": "animalType",
             "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "username",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -281,11 +410,11 @@
         ],
         "responses": {
           "200": {
-            "description": "An array of pets",
+            "description": "An array of Pets",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/pet"
+                "$ref": "#/definitions/Pet"
               }
             }
           }

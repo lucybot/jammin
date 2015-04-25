@@ -18,7 +18,12 @@ var successResponse = function(expectedBody, done) {
     if (!expectedBody) {
       Expect(body.success).to.equal(true);
     } else {
-      Expect(body).to.deep.equal(expectedBody);
+      if (Array.isArray(expectedBody)) {
+        Expect(body).to.deep.have.members(expectedBody);
+        Expect(expectedBody).to.deep.have.members(body);
+      } else {
+        Expect(body).to.deep.equal(expectedBody);
+      }
     }
     done();
   }
@@ -36,12 +41,8 @@ var failResponse = function(statusCode, done) {
 describe('Petstore', function() {
   before(function(done) {
     Petstore.listen(3000);
-    done();
-  });
-
-  after(function(done) {
     Petstore.dropAllEntries(done);
-  })
+  });
 
   it('should allow new users', function(done) {
     Request.post({
