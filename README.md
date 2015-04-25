@@ -36,48 +36,48 @@ App.listen(3000);
 ### GET
 Jammin will use ```req.params``` and ```req.query``` to **find an item** in the database.
 ```js
-API.pet.get('/pet/{name}');
+API.Pet.get('/pet/{name}');
 ```
 Use ```getMany``` to return an array of matching documents.
 ```js
-API.pet.getMany('/pet')
+API.Pet.getMany('/pet')
 ```
 
 ### POST
 Jammin will use ```req.body``` to **create a new item** in the database.
 ```js
-API.pet.post('/pets');
+API.Pet.post('/pets');
 ```
 Use ```postMany``` to accept an array of items to be created.
 ```js
-API.pet.postMany('/pets');
+API.Pet.postMany('/pets');
 ```
 
 ### PATCH
 Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item**.
 ```js
-API.pet.patch('/pets/{name}');
+API.Pet.patch('/pets/{name}');
 ```
 Use ```patchMany``` to update every matching item in the database.
 ```js
-API.pet.patchMany('/pets');
+API.Pet.patchMany('/pets');
 ```
 
 ### DELETE
 Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
 ```js
-API.pet.delete('/pets/{name}');
+API.Pet.delete('/pets/{name}');
 ```
 Use deleteMany to delete every matching item in the database.
 ```js
-API.pet.deleteMany('/pets');
+API.Pet.deleteMany('/pets');
 ```
 
 ### Middleware
 You can use middleware to intercept database calls, alter the request, perform authentication, etc.
 The example below alters ```req.query``` to construct a complex Mongo query from user inputs.
 ```js
-API.pet.getMany('/search/pets', function(req, res, next) {
+API.Pet.getMany('/search/pets', function(req, res, next) {
   req.query = {
     name: { "$regex": new RegExp(req.query.q) }
   };
