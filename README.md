@@ -90,8 +90,8 @@ Serve a [Swagger specification](http://swagger.io) for your API at the specified
 ```js
 API.swagger('/swagger.json');
 ```
-Jammin will fill out the technical details of your spec, but you can provide additional information:
-```
+Jammin will make a best guess at filling out the Swagger spec, but you can override the default behavior:
+```js
 var API = new Jammin({
   databaseURL: DatabaseURL,
   swagger: {
