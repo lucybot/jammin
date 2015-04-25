@@ -105,8 +105,6 @@ var API = new Jammin({
 ## Extended Usage
 
 ```js
-
-var FS = require('fs');
 var Hash = require('password-hash');
 var App = require('express')();
 var Jammin = require('jammin');
