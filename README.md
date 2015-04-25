@@ -18,9 +18,9 @@ var PetSchema = new Jammin.Schema({
   age: Number
 });
 
-API.define('pet', PetSchema);
-API.pet.get('/pets/{name}');
-API.pet.post('/pets');
+API.define('Pet', PetSchema);
+API.Pet.get('/pets/{name}');
+API.Pet.post('/pets');
 
 App.use('/api', API);
 App.listen(3000);
@@ -105,8 +105,6 @@ var API = new Jammin({
 ## Extended Usage
 
 ```js
-
-var FS = require('fs');
 var Hash = require('password-hash');
 var App = require('express')();
 var Jammin = require('jammin');
@@ -190,29 +188,24 @@ API.pet.postMany('/pets', authenticateUser, function(req, res, next) {
   next();
 });
 
-// Changes a pet.
-API.pet.put('/pets/{id}', authenticateUser, function(req, res, next) {
+// Setting req.query.owner will ensure that DB calls only return
+// documents owned by the user.
+var ensureOwnership = function(req, res, next) {
   req.query.owner = req.user.username;
   next();
-})
+}
+
+// Changes a pet.
+API.pet.put('/pets/{id}', authenticateUser, ensureOwnership)
 
 // Changes every pet that matches the query.
-API.pet.putMany('/pets', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
-})
+API.pet.putMany('/pets', authenticateUser, ensureOwnership)
 
 // Deletes a pet by ID.
-API.pet.delete('/pets/{id}', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
-});
+API.pet.delete('/pets/{id}', authenticateUser, ensureOwnership);
 
 // Deletes every pet that matches the query.
-API.pet.deleteMany('/pets', authenticateUser, function(req, res, next) {
-  req.query.owner = req.user.username;
-  next();
-})
+API.pet.deleteMany('/pets', authenticateUser, ensureOwnership)
 
 App.use('/api', API.router);
 App.listen(3000);
