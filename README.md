@@ -1,9 +1,7 @@
 ## Installation
 ```npm install jammin```
 
-**Note: Jammin is still in alpha. Not all features have been implemented.**
-
-*Unimplemented features are tagged with ```TODO```*
+**Note: Jammin is still in alpha. The API is not stable.**
 
 ## About
 Jammin is the fastest way (that I know of) to build a JSON REST API with Node, Express, and MongoDB. It consists of a light-weight wrapper around [Mongoose](http://mongoosejs.com/) for database operations and an [Express](http://expressjs.com/) router to expose HTTP methods. It is fully extensible via middleware to support things like authentication, resource ownership, and complex queries.
@@ -87,7 +85,7 @@ API.pet.getMany('/search/pets', function(req, res, next) {
 })
 ```
 
-### Swagger ```TODO```
+### Swagger
 Serve a [Swagger specification](http://swagger.io) for your API at the specified path. You can use this to document your API via [Swagger UI](https://github.com/swagger-api/swagger-ui) or a [LucyBot portal](https://lucybot.com)
 ```js
 API.swagger('/swagger.json');
