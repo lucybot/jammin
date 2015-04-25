@@ -1,0 +1,302 @@
+{
+  "info": {
+    "title": "Pet Store"
+  },
+  "host": "api.example.com",
+  "basePath": "/api",
+  "definitions": {
+    "pet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "animalType": {
+          "type": "string"
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password_hash": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "swagger": "2.0",
+  "paths": {
+    "/user": {
+      "post": {
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "type": "object",
+            "schema": {
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "description": "Adds a user",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/pets/{id}": {
+      "get": {
+        "description": "Retrieves a pet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "animalType",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A pet",
+            "schema": {
+              "$ref": "#/definitions/pet"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Updates a pet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "animalType",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A pet",
+            "schema": {
+              "$ref": "#/definitions/pet"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Removes a pet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "animalType",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/pets": {
+      "get": {
+        "description": "Retrieves an array of pets",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "animalType",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of pets",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/pet"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Adds an array of pets",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "patch": {
+        "description": "Updates an array of pets",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "animalType",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "description": "Removes an array of pets",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "animalType",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/search/pets": {
+      "get": {
+        "description": "Search all pets by name",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string",
+            "description": "Any regex"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of pets",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/pet"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ]
+}
