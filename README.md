@@ -22,7 +22,7 @@ API.define('Pet', PetSchema);
 API.Pet.get('/pets/{name}');
 API.Pet.post('/pets');
 
-App.use('/v0', API);
+App.use('/v0', API.router);
 App.listen(3000);
 ```
 
