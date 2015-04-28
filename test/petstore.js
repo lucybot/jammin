@@ -237,6 +237,13 @@ describe('Petstore', function() {
       url: BASE_URL + '/pet_count',
       json: true
     }, successResponse({count: 4}, done));
+  });
+
+  it('should support mapItem to get pet types', function(done) {
+    Request.get({
+      url: BASE_URL + '/pet_types',
+      json: true,
+    }, successResponse(['dog', 'dog', 'dog', 'unknown'], done));
   })
 
   it('should allow batched deletes of pets', function(done) {

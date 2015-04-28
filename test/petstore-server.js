@@ -156,6 +156,8 @@ API.router.get('/pet_count', function(req, res) {
   })
 })
 
+API.Pet.getMany('/pet_types', {mapItem: function(pet) {return pet.animalType}})
+
 API.swagger('/swagger.json');
 
 App.use('/api', API.router);
