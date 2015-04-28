@@ -9,6 +9,22 @@ var BASE_URL = 'http://127.0.0.1:3000/api';
 var USER_1 = {username: 'user1', password: 'jabberwocky'}
 var USER_2 = {username: 'user2', password: 'cabbagesandkings'}
 
+var PETS = [
+  {id: 0, name: "Pet0", owner: USER_1.username, animalType: "dog"},
+  {id: 1, name: "Pet1", owner: USER_1.username, animalType: "gerbil"},
+  {id: 2, name: "Pet2", owner: USER_2.username, animalType: "dog"},
+  {id: 3, name: "Pet3", owner: USER_1.username, animalType: "cat"},
+  {id: 4, name: "Pet4", owner: USER_1.username, animalType: "cat"},
+  {id: 5, name: "Pet5", owner: USER_1.username, animalType: "unknown"}
+]
+PETS.forEach(function(pet) {
+  pet.vaccinations = [];
+})
+
+var VACCINATIONS = [{name: 'Rabies', date: '1987-09-23T00:00:00.000Z'}];
+
+var CurrentPets = [];
+
 var successResponse = function(expectedBody, done) {
   if (!done) {
     done = expectedBody;
@@ -73,18 +89,20 @@ describe('Petstore', function() {
   })
 
   it('should allow new pets', function(done) {
+    CurrentPets.push(PETS[1]);
     Request.post({
       url: BASE_URL + '/pets',
-      body: {id: 42, name: 'Lucy'},
+      body: {id: 1, name: PETS[1].name, animalType: PETS[1].animalType},
       headers: USER_1,
       json: true
     }, successResponse(null, done));
   })
 
   it('should allow a second pet', function(done) {
+    CurrentPets.push(PETS[2]);
     Request.post({
       url: BASE_URL + '/pets',
-      body: {id: 43, name: 'Goose'},
+      body: {id: 2, name: PETS[2].name, animalType: PETS[2].animalType},
       headers: USER_2,
       json: true
     }, successResponse(null, done));
@@ -93,18 +111,19 @@ describe('Petstore', function() {
   it('should not allow modifications from wrong user', function(done) {
     Request({
       method: 'patch',
-      url: BASE_URL + '/pets/42',
+      url: BASE_URL + '/pets/1',
       headers: USER_2,
       json: true
     }, failResponse(404, done)); // TODO: should be 401
   })
 
   it('should allow modifications to pet', function(done) {
+    PETS[1].name = 'Loosey';
     Request({
       method: 'patch',
-      url: BASE_URL + '/pets/42',
+      url: BASE_URL + '/pets/1',
       headers: USER_1,
-      body: {name: 'Loosey'},
+      body: {name: PETS[1].name},
       json: true
     }, successResponse(done));
   })
@@ -112,18 +131,15 @@ describe('Petstore', function() {
   it('should allow searching', function(done) {
     Request.get({
       url: BASE_URL + '/search/pets',
-      qs: {q: 'oos'},
+      qs: {q: 'Loosey'},
       json: true
-    }, successResponse([
-      {id: 42, name: "Loosey", owner: USER_1.username, animalType: "unknown"},
-      {id: 43, name: "Goose", owner: USER_2.username, animalType: "unknown"}
-    ], done))
+    }, successResponse([PETS[1]], done))
   })
 
   it('should not allow duplicate pets', function(done) {
     Request.post({
       url: BASE_URL + '/pets',
-      body: {id: 42, name: 'Goose'},
+      body: {id: 1, name: 'Goose'},
       headers: USER_1,
       json: true
     }, failResponse(500, done))
@@ -132,7 +148,7 @@ describe('Petstore', function() {
   it('should not allow new pets without auth', function(done) {
     Request.post({
       url: BASE_URL + '/pets',
-      body: {id: 43, name: 'Goose'},
+      body: {id: 55, name: 'Goose'},
       json: true
     }, failResponse(401, done));
   })
@@ -140,7 +156,7 @@ describe('Petstore', function() {
   it('should not allow deletes without auth', function(done) {
     Request({
       method: 'delete',
-      url: BASE_URL + '/pets/42',
+      url: BASE_URL + '/pets/1',
       json: true
     }, failResponse(401, done));
   })
@@ -148,7 +164,7 @@ describe('Petstore', function() {
   it('should not allow deletes from wrong user', function(done) {
     Request({
       method: 'delete',
-      url: BASE_URL + '/pets/42',
+      url: BASE_URL + '/pets/1',
       headers: USER_2,
       json: true
     }, failResponse(404, done)); // TODO: should return 401
@@ -156,15 +172,15 @@ describe('Petstore', function() {
 
   it('should not reflect bad delete', function(done) {
     Request.get({
-      url: BASE_URL + '/pets/42',
+      url: BASE_URL + '/pets/1',
       json: true
-    }, successResponse({id: 42, name: 'Loosey', owner: USER_1.username, animalType: "unknown"}, done));
+    }, successResponse(PETS[1], done));
   })
 
   it('should not allow deletes with wrong password', function(done) {
     Request({
       method: 'delete',
-      url: BASE_URL + '/pets/42',
+      url: BASE_URL + '/pets/1',
       headers: {
         username: USER_1.username,
         password: USER_2.password
@@ -174,36 +190,29 @@ describe('Petstore', function() {
   })
 
   it('should allow deletes from owner', function(done) {
+    CurrentPets.shift();
     Request({
       method: 'delete',
-      url: BASE_URL + '/pets/42',
+      url: BASE_URL + '/pets/1',
       headers: USER_1,
       json: true
     }, successResponse(null, done));
   })
 
   it('should allow batched adds of pets', function(done) {
+    CurrentPets.unshift(PETS[3], PETS[4], PETS[5]);
     Request.post({
       url: BASE_URL + '/pets',
       headers: USER_1,
-      body: [{
-        id: 1,
-        name: "Pet1",
-        animalType: "cat",
-      }, {
-        id: 2,
-        name: "Pet2",
-        animalType: "cat",
-      }, {
-        id: 3,
-        name: "Pet3",
-        animalType: "cat",
-      }],
+      body: [PETS[3], PETS[4], PETS[5]],
       json: true
     }, successResponse(null, done))
   })
 
   it('should allow batched modification of pets', function(done) {
+    CurrentPets.forEach(function(pet) {
+      if (pet.owner == USER_1.username && pet.animalType === 'cat') pet.animalType = 'dog';
+    });
     Request({
       method: 'patch',
       url: BASE_URL + '/pets',
@@ -225,28 +234,42 @@ describe('Petstore', function() {
         animalType: 'dog'
       },
       json: true
-    }, successResponse([
-        {id: 1, name: "Pet1", owner: USER_1.username, animalType: 'dog'},
-        {id: 2, name: "Pet2", owner: USER_1.username, animalType: 'dog'},
-        {id: 3, name: "Pet3", owner: USER_1.username, animalType: 'dog'},
-    ], done))
+    }, successResponse(CurrentPets.filter(function(pet) {return pet.animalType === 'dog'}), done))
   })
 
   it('should support pet_count', function(done) {
     Request.get({
       url: BASE_URL + '/pet_count',
       json: true
-    }, successResponse({count: 4}, done));
+    }, successResponse({count: CurrentPets.length}, done));
   });
 
   it('should support mapItem to get pet types', function(done) {
     Request.get({
       url: BASE_URL + '/pet_types',
       json: true,
-    }, successResponse(['dog', 'dog', 'dog', 'unknown'], done));
+    }, successResponse(CurrentPets.map(function(pet) {return pet.animalType}), done));
+  })
+
+  it('should allow adding a vaccination', function(done) {
+    PETS[3].vaccinations = VACCINATIONS;
+    Request.patch({
+      url: BASE_URL + '/pets/3',
+      headers: USER_1,
+      body: {vaccinations: VACCINATIONS},
+      json: true,
+    }, successResponse(done))
+  })
+
+  it('should reflect added vaccination', function(done) {
+    Request.get({
+      url: BASE_URL + '/pets/3',
+      json: true,
+    }, successResponse(PETS[3], done));
   })
 
   it('should allow batched deletes of pets', function(done) {
+    CurrentPets = CurrentPets.filter(function(pet) {return pet.animalType !== 'dog'});
     Request({
       method: 'delete',
       url: BASE_URL + '/pets',

@@ -32,6 +32,21 @@
         },
         "animalType": {
           "type": "string"
+        },
+        "vaccinations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
         }
       }
     },
@@ -98,6 +113,11 @@
             "name": "animalType",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "vaccinations",
+            "in": "query",
+            "type": "array"
           }
         ],
         "responses": {
@@ -211,6 +231,11 @@
             "name": "animalType",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "vaccinations",
+            "in": "query",
+            "type": "array"
           }
         ],
         "responses": {
@@ -351,6 +376,11 @@
             "name": "animalType",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "vaccinations",
+            "in": "query",
+            "type": "array"
           }
         ],
         "responses": {

@@ -46,7 +46,11 @@ var PetSchema = {
   id: {type: Number, required: true, unique: true},
   name: String,
   owner: String,
-  animalType: {type: String, default: 'unknown'}
+  animalType: {type: String, default: 'unknown'},
+  vaccinations: [{
+    name: String,
+    date: Date
+  }]
 }
 
 var authenticateUser = function(req, res, next) {
