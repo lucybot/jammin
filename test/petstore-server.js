@@ -4,12 +4,15 @@ var App = require('express')();
 App.use(require('cors')());
 
 module.exports.listen = function(port) {
+  console.log('listening: ' + port);
   App.listen(port || 3000);
 }
 
 module.exports.dropAllEntries = function(callback) {
   API.Pet.db.remove({}, function(err) {
+    if (err) throw err;
     API.User.db.remove({}, function(err) {
+      if (err) throw err;
       callback();
     })
   })
@@ -103,7 +106,7 @@ API.User.post('/users', {
 API.User.getMany('/users');
 
 // Gets a pet by id.
-API.Pet.get('/pets/{id}');
+API.Pet.get('/pets/:id');
 
 // Gets an array of pets that match the query.
 API.Pet.getMany('/pets');
@@ -123,7 +126,7 @@ API.Pet.getMany('/search/pets', {
   next();
 })
 
-API.Pet.post('/pets/{id}', SwaggerLogin, authenticateUser, function(req, res, next) {
+API.Pet.post('/pets/:id', {upsert: true, swagger: SwaggerLogin.swagger}, authenticateUser, function(req, res, next) {
   req.body.owner = req.user.username;
   req.body.id = req.params.id;
   next();
@@ -146,13 +149,13 @@ var enforceOwnership = function(req, res, next) {
 }
 
 // Changes a pet.
-API.Pet.patch('/pets/{id}', SwaggerLogin, authenticateUser, enforceOwnership);
+API.Pet.patch('/pets/:id', SwaggerLogin, authenticateUser, enforceOwnership);
 
 // Changes every pet that matches the query.
 API.Pet.patchMany('/pets', SwaggerLogin, authenticateUser, enforceOwnership);
 
 // Deletes a pet by ID.
-API.Pet.delete('/pets/{id}', SwaggerLogin, authenticateUser, enforceOwnership);
+API.Pet.delete('/pets/:id', SwaggerLogin, authenticateUser, enforceOwnership);
 
 // Deletes every pet that matches the query.
 API.Pet.deleteMany('/pets', SwaggerLogin, authenticateUser, enforceOwnership);

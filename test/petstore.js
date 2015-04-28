@@ -16,10 +16,10 @@ var PETS = [
   {id: 3, name: "Pet3", owner: USER_1.username, animalType: "cat"},
   {id: 4, name: "Pet4", owner: USER_1.username, animalType: "cat"},
   {id: 5, name: "Pet5", owner: USER_1.username, animalType: "unknown"}
-]
+];
 PETS.forEach(function(pet) {
   pet.vaccinations = [];
-})
+});
 
 var VACCINATIONS = [{name: 'Rabies', date: '1987-09-23T00:00:00.000Z'}];
 
@@ -115,6 +115,16 @@ describe('Petstore', function() {
     }, successResponse(null, done));
   })
 
+  it('should upsert on post', function(done) {
+    PETS[2].name = 'Goose';
+    Request.post({
+      url: BASE_URL + '/pets/' + PETS[2].id,
+      body: PETS[2],
+      headers: USER_2,
+      json: true
+    }, successResponse(null, done))
+  })
+
   it('should not allow modifications from wrong user', function(done) {
     Request({
       method: 'patch',
@@ -138,9 +148,9 @@ describe('Petstore', function() {
   it('should allow searching', function(done) {
     Request.get({
       url: BASE_URL + '/search/pets',
-      qs: {q: 'Loosey'},
+      qs: {q: 'oose'},
       json: true
-    }, successResponse([PETS[1]], done))
+    }, successResponse([PETS[1], PETS[2]], done))
   })
 
   it('should not allow duplicate pets', function(done) {
