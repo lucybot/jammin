@@ -66,15 +66,22 @@ describe('Petstore', function() {
 
   it('should allow new users', function(done) {
     Request.post({
-      url: BASE_URL + '/user',
+      url: BASE_URL + '/users',
       body: USER_1,
       json: true
     }, successResponse(null, done));
   });
 
+  it('should not show password_hash', function(done) {
+    Request.get({
+      url: BASE_URL + '/users',
+      json: true,
+    }, successResponse([{username: USER_1.username}], done))
+  });
+
   it('should not allow duplicate user names', function(done) {
     Request.post({
-      url: BASE_URL + '/user',
+      url: BASE_URL + '/users',
       body: USER_1,
       json: true
     }, failResponse(500, done));
@@ -82,7 +89,7 @@ describe('Petstore', function() {
 
   it('should allow a second user', function(done) {
     Request.post({
-      url: BASE_URL + '/user',
+      url: BASE_URL + '/users',
       body: USER_2,
       json: true
     }, successResponse(null, done));

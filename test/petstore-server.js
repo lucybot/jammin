@@ -39,7 +39,7 @@ var API = new Jammin({
 
 var UserSchema = {
   username: {type: String, required: true, unique: true, match: /^\w+$/},
-  password_hash: {type: String, required: true},
+  password_hash: {type: String, required: true, select: false}
 }
 
 var PetSchema = {
@@ -57,10 +57,10 @@ var authenticateUser = function(req, res, next) {
   var query = {
     username: req.headers['username'],
   };
-  API.User.db.findOne(query, function(err, user) {
+  API.User.db.findOne(query).select('+password_hash').exec(function(err, user) {
     if (err) {
       res.status(500).json({error: err.toString()})
-    } else if (!user) {
+    } else if (!user || !user.password_hash) {
       res.status(401).json({error: "Unknown user:" + query.username});
     } else if (!Hash.verify(req.headers['password'], user.password_hash)) {
       res.status(401).json({error: "Invalid password for " + query.username}) 
@@ -81,7 +81,7 @@ API.define('Pet', PetSchema);
 API.define('User', UserSchema);
 
 // Creates a new user.
-API.User.post('/user', {
+API.User.post('/users', {
   swagger: {
     parameters: [{
         name: 'body',
@@ -98,6 +98,9 @@ API.User.post('/user', {
   req.body.password_hash = Hash.generate(req.body.password);
   next();
 });
+
+// Gets all users
+API.User.getMany('/users');
 
 // Gets a pet by id.
 API.Pet.get('/pets/{id}');

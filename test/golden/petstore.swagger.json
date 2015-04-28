@@ -64,7 +64,7 @@
   },
   "swagger": "2.0",
   "paths": {
-    "/user": {
+    "/users": {
       "post": {
         "parameters": [
           {
@@ -86,6 +86,32 @@
         "responses": {
           "200": {
             "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "description": "Retrieves an array of Users",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "password_hash",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of Users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
           }
         }
       }
