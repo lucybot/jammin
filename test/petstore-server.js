@@ -150,6 +150,12 @@ API.Pet.delete('/pets/{id}', SwaggerLogin, authenticateUser, enforceOwnership);
 // Deletes every pet that matches the query.
 API.Pet.deleteMany('/pets', SwaggerLogin, authenticateUser, enforceOwnership);
 
+API.router.get('/pet_count', function(req, res) {
+  API.Pet.getMany(req, res, function(pets) {
+    res.json({count: pets.length})
+  })
+})
+
 API.swagger('/swagger.json');
 
 App.use('/api', API.router);

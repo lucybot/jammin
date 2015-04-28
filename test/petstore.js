@@ -10,6 +10,10 @@ var USER_1 = {username: 'user1', password: 'jabberwocky'}
 var USER_2 = {username: 'user2', password: 'cabbagesandkings'}
 
 var successResponse = function(expectedBody, done) {
+  if (!done) {
+    done = expectedBody;
+    expectedBody = {success: true};
+  }
   return function(err, res, body) {
     if (body.error) console.log(body.error);
     Expect(err).to.equal(null);
@@ -102,12 +106,7 @@ describe('Petstore', function() {
       headers: USER_1,
       body: {name: 'Loosey'},
       json: true
-    }, successResponse({
-        id: 42,
-        name: "Loosey",
-        animalType: "unknown",
-        owner: USER_1.username
-    }, done));
+    }, successResponse(done));
   })
 
   it('should allow searching', function(done) {
@@ -153,6 +152,13 @@ describe('Petstore', function() {
       headers: USER_2,
       json: true
     }, failResponse(404, done)); // TODO: should return 401
+  });
+
+  it('should not reflect bad delete', function(done) {
+    Request.get({
+      url: BASE_URL + '/pets/42',
+      json: true
+    }, successResponse({id: 42, name: 'Loosey', owner: USER_1.username, animalType: "unknown"}, done));
   })
 
   it('should not allow deletes with wrong password', function(done) {
@@ -224,6 +230,13 @@ describe('Petstore', function() {
         {id: 2, name: "Pet2", owner: USER_1.username, animalType: 'dog'},
         {id: 3, name: "Pet3", owner: USER_1.username, animalType: 'dog'},
     ], done))
+  })
+
+  it('should support pet_count', function(done) {
+    Request.get({
+      url: BASE_URL + '/pet_count',
+      json: true
+    }, successResponse({count: 4}, done));
   })
 
   it('should allow batched deletes of pets', function(done) {
