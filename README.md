@@ -19,7 +19,7 @@ var PetSchema = new Jammin.Schema({
 });
 
 API.define('Pet', PetSchema);
-API.Pet.get('/pets/{name}');
+API.Pet.get('/pets/:name');
 API.Pet.post('/pets');
 
 App.use('/v0', API.router);
@@ -36,7 +36,7 @@ App.listen(3000);
 ### GET
 Jammin will use ```req.params``` and ```req.query``` to **find an item** in the database.
 ```js
-API.Pet.get('/pet/{name}');
+API.Pet.get('/pet/:name);
 ```
 Use ```getMany``` to return an array of matching documents.
 ```js
@@ -56,7 +56,7 @@ API.Pet.postMany('/pets');
 ### PATCH
 Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item**.
 ```js
-API.Pet.patch('/pets/{name}');
+API.Pet.patch('/pets/:name);
 ```
 Use ```patchMany``` to update every matching item in the database.
 ```js
@@ -66,7 +66,7 @@ API.Pet.patchMany('/pets');
 ### DELETE
 Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
 ```js
-API.Pet.delete('/pets/{name}');
+API.Pet.delete('/pets/:name);
 ```
 Use deleteMany to delete every matching item in the database.
 ```js
@@ -159,7 +159,7 @@ API.user.post('/user', function(req, res, next) {
 });
 
 // Gets a pet by id.
-API.pet.get('/pets/{id}');
+API.pet.get('/pets/:id);
 
 // Gets an array of pets that match the query.
 API.pet.getMany('/pets');
@@ -196,13 +196,13 @@ var ensureOwnership = function(req, res, next) {
 }
 
 // Changes a pet.
-API.pet.put('/pets/{id}', authenticateUser, ensureOwnership)
+API.pet.put('/pets/:id, authenticateUser, ensureOwnership)
 
 // Changes every pet that matches the query.
 API.pet.putMany('/pets', authenticateUser, ensureOwnership)
 
 // Deletes a pet by ID.
-API.pet.delete('/pets/{id}', authenticateUser, ensureOwnership);
+API.pet.delete('/pets/:id, authenticateUser, ensureOwnership);
 
 // Deletes every pet that matches the query.
 API.pet.deleteMany('/pets', authenticateUser, ensureOwnership)
