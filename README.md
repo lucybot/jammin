@@ -4,19 +4,19 @@
 **Note: Jammin is still in alpha. The API is not stable.**
 
 ## About
-Jammin is the fastest way (that I know of) to build a JSON REST API with Node, Express, and MongoDB. It consists of a light-weight wrapper around [Mongoose](http://mongoosejs.com/) for database operations and an [Express](http://expressjs.com/) router to expose HTTP methods. It is fully extensible via middleware to support things like authentication, resource ownership, and complex queries.
+Jammin is the fastest way (that I know of) to build REST APIs in NodeJS. It consists of a light-weight wrapper around [Mongoose](http://mongoosejs.com/) for database operations and an [Express](http://expressjs.com/) router to expose HTTP methods. It is fully extensible via middleware to support things like authentication, resource ownership, and complex queries.
 
 ## Usage
 
 ```js
 var App = require('express')();
 var Jammin = require('jammin');
-var API = new Jammin('mongodb://<username>:<password>@<mongodb_host>');
+var API = new Jammin.API('mongodb://<username>:<password>@<mongodb_host>');
 
-var PetSchema = new Jammin.Schema({
+var PetSchema = {
   name: String,
   age: Number
-});
+};
 
 API.define('Pet', PetSchema);
 API.Pet.get('/pets/:name');
@@ -133,3 +133,6 @@ var API = new Jammin({
   }
 });
 ```
+
+## Extended Usage
+See the example [Petstore Server](test/petstore-server.js) for other examples.
