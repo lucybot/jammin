@@ -1,6 +1,6 @@
 {
   "name": "jammin",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "REST API Generator using Express and Mongoose",
   "main": "index.js",
   "repository": {
