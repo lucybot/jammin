@@ -55,4 +55,11 @@ describe('RemoteFS', function() {
       done();
     });
   });
+
+  it('should not create files outside of directory', function(done) {
+    RemoteFS.create('../../outside.txt', 'outside world', function(err) {
+      Expect(err).to.equal(null);
+      done();
+    })
+  })
 });
