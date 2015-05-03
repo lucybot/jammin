@@ -20,7 +20,7 @@
     "validator": "^3.39.0"
   },
   "scripts": {
-    "test": "mocha test/petstore.js && mocha test/validator.js"
+    "test": "mocha test/petstore.js && mocha test/modules.js"
   },
   "author": "Bobby Brennan <bobby@lucybot.com> (https://lucybot.com/)",
   "license": "ISC"
