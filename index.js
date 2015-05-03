@@ -1,1 +1,3 @@
-module.exports = require('./lib/api.js');
+var Jammin = module.exports = {}
+Jammin.API = require('./lib/api.js');
+Jammin.Client = require('./lib/client.js');

@@ -16,10 +16,11 @@
   },
   "devDependencies": {
     "async": "^0.9.0",
-    "chai": "^2.2.0"
+    "chai": "^2.2.0",
+    "validator": "^3.39.0"
   },
   "scripts": {
-    "test": "mocha test/petstore.js"
+    "test": "mocha test/petstore.js && mocha test/validator.js"
   },
   "author": "Bobby Brennan <bobby@lucybot.com> (https://lucybot.com/)",
   "license": "ISC"

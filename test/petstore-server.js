@@ -20,7 +20,7 @@ module.exports.dropAllEntries = function(callback) {
 
 var DatabaseURL = JSON.parse(FS.readFileSync('./creds/mongo.json', 'utf8')).url;
 var Jammin = require('../index.js')
-var API = new Jammin({
+var API = new Jammin.API({
   databaseURL: DatabaseURL,
   swagger: {
     info: {title: 'Pet Store', version: '0.1'},
