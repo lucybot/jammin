@@ -75,9 +75,13 @@ API.Pet.deleteMany('/pets');
 
 ### Middleware
 You can use middleware to intercept database calls, alter the request, perform authentication, etc.
+
 Change ```req.jammin.query``` to alter how Jammin selects items from the database.
+
 Change ```req.jammin.document``` to alter the document Jammin will insert into the database.
+
 Change ```req.jammin.method``` to alter how Jammin interacts with the database.
+
 The example below alters ```req.query``` to construct a complex Mongo query from user inputs.
 ```js
 API.Pet.getMany('/search/pets', function(req, res, next) {
