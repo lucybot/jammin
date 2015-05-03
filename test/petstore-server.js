@@ -98,7 +98,7 @@ API.User.post('/users', {
     }]
   }
 }, function(req, res, next) {
-  req.body.password_hash = Hash.generate(req.body.password);
+  req.jammin.document.password_hash = Hash.generate(req.body.password);
   next();
 });
 
@@ -120,31 +120,36 @@ API.Pet.getMany('/search/pets', {
     ]
   }
 }, function(req, res, next) {
-  req.query = {
+  req.jammin.query = {
     name: { "$regex": new RegExp(req.query.q) }
   };
   next();
-})
+});
 
-API.Pet.post('/pets/:id', {upsert: true, swagger: SwaggerLogin.swagger}, authenticateUser, function(req, res, next) {
-  req.body.owner = req.user.username;
-  req.body.id = req.params.id;
+var upsert = function(req, res, next) {
+  req.jammin.method = 'put';
+  next();
+}
+
+API.Pet.post('/pets/:id', SwaggerLogin, upsert, authenticateUser, function(req, res, next) {
+  req.jammin.document.owner = req.user.username;
+  req.jammin.document.id = req.params.id;
   next();
 })
 
 // Creates one or more new pets.
 API.Pet.postMany('/pets', SwaggerLogin, authenticateUser, function(req, res, next) {
-  if (!Array.isArray(req.body)) req.body = [req.body];
-  req.body.forEach(function(pet) {
+  if (!Array.isArray(req.jammin.document)) req.jammin.document = [req.jammin.document];
+  req.jammin.document.forEach(function(pet) {
     pet.owner = req.user.username;
   });
   next();
 });
 
-// Setting req.query.owner ensures that only the logged-in user's
+// Setting req.jammin.query.owner ensures that only the logged-in user's
 // pets will be returned by any queries Jammin makes to the DB.
 var enforceOwnership = function(req, res, next) {
-  req.query.owner = req.user.username;
+  req.jammin.query.owner = req.user.username;
   next();
 }
 
