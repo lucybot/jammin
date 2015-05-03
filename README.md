@@ -98,7 +98,7 @@ API.router.use('/pets', function(req, res, next) {
     req.jammin.method = 'PATCH';
     req.jammin.document = {deleted: true};
   } else if (req.method === 'GET') {
-    req.jammin.query = {deleted: {"$ne": true}}
+    req.jammin.query.deleted = {"$ne": true};
   } else if (req.method === 'POST' || req.method === 'PUT') {
     req.jammin.document.deleted = false;
   }
