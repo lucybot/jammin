@@ -63,6 +63,16 @@ Use ```patchMany``` to update every matching item in the database.
 API.Pet.patchMany('/pets');
 ```
 
+### PUT
+Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item, or create it if it doesn't exist**
+```js
+API.Pet.put('/pets/:name');
+```
+Use putMany to update every matching item, or create a single new item if there's no match.
+```js
+API.Pet.putMany('/pets');
+```
+
 ### DELETE
 Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
 ```js
