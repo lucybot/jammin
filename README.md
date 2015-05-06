@@ -6,7 +6,7 @@
 ## About
 Jammin is the fastest way (that I know of) to build REST APIs in NodeJS. It consists of:
 * A light-weight wrapper around [Mongoose](http://mongoosejs.com/) to expose database operations
-* A module wrapper for exposing functions as API calls
+* A module wrapper for exposing functions as API endpoints
 * An [Express](http://expressjs.com/) router to expose HTTP methods.
 
 Jammin is fully extensible via **middleware** to support things like authentication, sanitization, and resource ownership.
