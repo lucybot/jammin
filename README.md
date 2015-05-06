@@ -14,7 +14,7 @@ Jammin is fully extensible via **middleware** to support things like authenticat
 ## Usage
 
 ### Database Operations
-Use API.define() to create Mongoose models and expose HTTP methods that will use ```req.params``` and ```req.query``` to query the database and ```req.body``` to update it.
+Use ```API.define()``` to create Mongoose models and expose HTTP methods that will use ```req.params``` and ```req.query``` to query the database and ```req.body``` to update it.
 ```js
 var App = require('express')();
 var Jammin = require('jammin');
