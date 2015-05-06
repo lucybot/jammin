@@ -23,5 +23,5 @@
     "test": "mocha test/petstore.js && mocha test/modules.js"
   },
   "author": "Bobby Brennan <bobby@lucybot.com> (https://lucybot.com/)",
-  "license": "ISC"
+  "license": "MIT"
 }
