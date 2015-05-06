@@ -65,9 +65,9 @@ Hello World!
 Use ```Jammin.Client()``` to create a client of the remote module.
 ```js
 var RemoteFS = new Jammin.Client({
+  module: require('fs'),
   basePath: '/files',
   host: 'http://127.0.0.1:3000',
-  module: require('fs')
 });
 RemoteFS.writeFile('foo.txt', 'Hello World!', function(err) {
   RemoteFS.readFile('foo.txt', function(err, contents) {
@@ -140,6 +140,14 @@ See the Middleware section below for an example of how to more safely expose fs
 Jammin also provides clients for exposed modules. This allows you to bridge function calls over HTTP, effectively allowing you to ```require()``` modules from a remote client.
 
 This allows you to quickly containerize node modules that communicate via JSON-serializable data, e.g. to place a particularly expensive operation behind a load balancer, or to run potentially malicious code inside a sandboxed container.
+
+```js
+var RemoteFS = new Jammin.Client({
+  module: require('fs'),
+  basePath: '/files',
+  host: 'http://127.0.0.1:3000',
+});
+```
 
 ### Middleware
 You can use middleware to intercept database calls, alter the request, perform authentication, etc.
