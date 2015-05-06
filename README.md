@@ -37,9 +37,16 @@ App.listen(3000);
 
 **GET** ```get/getMany``` will use ```req.params``` and ```req.query``` to **find an item** or array of items in the database.
 ```js
-API.Pet.get('/pet/:name);
-API.Pet.getMany('/pet')
+API.Pet.get('/pet/:name');
+API.Pet.getMany('/pets')
 ```
+```bash
+> curl $HOST/pets?age=2
+[{"name": "Lucy", "age": 2}, {"name": "Goose", "age": 2}]
+> curl 127.0.0.1:3000/v0/pets/Lucy
+{"name": "Lucy", "age": 2}
+```
+
 **POST** ```post/postMany``` will use ```req.body``` to **create a new item** or set of items in the database.
 ```js
 API.Pet.post('/pets');
