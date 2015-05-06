@@ -9,7 +9,11 @@ Jammin is the fastest way (that I know of) to build REST APIs in NodeJS. It cons
 * A module wrapper for exposing functions as API calls
 * An [Express](http://expressjs.com/) router to expose HTTP methods.
 
-Jammin is fully extensible via **middleware** to support things like authentication, sanitization, resource ownership, and complex queries.
+Jammin is fully extensible via **middleware** to support things like authentication, sanitization, and resource ownership.
+
+In addition to performing database CRUD, Jammin can ease the process of containerization by bridging function calls over HTTP. If you have a node module that communicates via JSON-serializable data, Jammin allows you to ```require()``` that module from a remote NodeJS client. See the Modules section for an example.
+
+Jammin can also serve a [Swagger](http://swagger.io) specification, allowing your API to link into tools like [Ready! API](http://smartbear.com/product/ready-api/overview/) and [LucyBot](https://lucybot.com)
 
 ## Usage
 
@@ -85,7 +89,7 @@ Jammin will expose top-level functions in the module as POST requests. Arguments
 > curl -X POST $HOST/files -d '{"path": "foo.txt", "data": "hello"}'
 > curl -X POST $HOST/files -d '["foo.txt", "hello"]'
 ```
-See the Middleware section below for an example of how to safely expose fs
+See the Middleware section below for an example of how to more safely expose fs
 
 ### Database Operations
 
@@ -192,7 +196,7 @@ API.module('/files', {module: require('fs'), async: true}, function(req, res, ne
 });
 ```
 
-### Swagger
+### Swagger (beta)
 Serve a [Swagger specification](http://swagger.io) for your API at the specified path. You can use this to document your API via [Swagger UI](https://github.com/swagger-api/swagger-ui) or a [LucyBot portal](https://lucybot.com)
 ```js
 API.swagger('/swagger.json');
