@@ -13,25 +13,6 @@ Jammin is fully extensible via middleware to support things like authentication,
 
 ## Usage
 
-### Modules
-Use API.module() to automatically pass ```req.query``` and ```req.body``` as arguments to a pre-defined set of functions.
-This example exposes filesystem operations to the API client.
-```js
-var App = require('express')();
-var Jammin = require('jammin');
-
-var API = new Jammin.API();
-API.module('/files', {module: require('fs'), async: true});
-
-App.use('/v0', API.router);
-App.listen(3000);
-```
-```bash
-> curl -X POST $HOST/v0/files/writeFile?path=hello.txt -d {"data": "Hello World!"}
-> curl -X POST $HOST/v0/files/readFile?path=hello.txt
-Hello World!
-```
-
 ### Database Operations
 Use API.define() to create Mongoose models, and expose HTTP methods that will use ```req.params``` and ```req.query``` to query the database and ```req.body``` to update it.
 ```js
@@ -57,6 +38,25 @@ App.listen(3000);
 {"success": true}
 > curl $HOST/v0/pets/Lucy
 {"name": "Lucy", "age": 2}
+```
+
+### Modules (beta)
+Use API.module() to automatically pass ```req.query``` and ```req.body``` as arguments to a pre-defined set of functions.
+This example exposes filesystem operations to the API client.
+```js
+var App = require('express')();
+var Jammin = require('jammin');
+
+var API = new Jammin.API();
+API.module('/files', {module: require('fs'), async: true});
+
+App.use('/v0', API.router);
+App.listen(3000);
+```
+```bash
+> curl -X POST $HOST/v0/files/writeFile?path=hello.txt -d {"data": "Hello World!"}
+> curl -X POST $HOST/v0/files/readFile?path=hello.txt
+Hello World!
 ```
 
 ## Documentation
