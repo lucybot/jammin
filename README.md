@@ -13,7 +13,7 @@ Jammin is fully extensible via **middleware** to support things like authenticat
 
 In addition to performing database CRUD, Jammin can ease the process of containerization by bridging function calls over HTTP. If you have a node module that communicates via JSON-serializable data, Jammin allows you to ```require()``` that module from a remote NodeJS client. See the Modules section for an example.
 
-Jammin can also serve a [Swagger](http://swagger.io) specification, allowing your API to link into tools like [Ready! API](http://smartbear.com/product/ready-api/overview/) and [LucyBot](https://lucybot.com)
+Jammin can also serve a [Swagger](http://swagger.io) specification, allowing your API to link into tools like [Swagger UI](http://petstore.swagger.io/) and [LucyBot](https://lucybot.com)
 
 ## Usage
 
