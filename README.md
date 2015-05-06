@@ -4,9 +4,33 @@
 **Note: Jammin is still in alpha. The API is not stable.**
 
 ## About
-Jammin is the fastest way (that I know of) to build REST APIs in NodeJS. It consists of a light-weight wrapper around [Mongoose](http://mongoosejs.com/) for database operations and an [Express](http://expressjs.com/) router to expose HTTP methods. It is fully extensible via middleware to support things like authentication, resource ownership, and complex queries.
+Jammin is the fastest way (that I know of) to build REST APIs in NodeJS. It consists of:
+* A light-weight wrapper around [Mongoose](http://mongoosejs.com/) to expose database operations
+* A module wrapper for exposing functions as API calls
+* An [Express](http://expressjs.com/) router to expose HTTP methods.
+
+Jammin is fully extensible via middleware to support things like authentication, sanitization, resource ownership, and complex queries.
 
 ## Usage
+
+### Modules
+```js
+var App = require('express')();
+var Jammin = require('jammin');
+
+var API = new Jammin.API();
+API.module('/files', {module: require('fs'), async: true});
+
+App.use('/v0', API.router);
+App.listen(3000);
+```
+```bash
+> curl -X POST $HOST/v0/files/writeFile?path=hello.txt -d {"data": "Hello World!"}
+> curl -X POST $HOST/v0/files/readFile?path=hello.txt
+Hello World!
+```
+
+### Database Operations
 
 ```js
 var App = require('express')();
@@ -34,7 +58,24 @@ App.listen(3000);
 {"name": "Lucy", "age": 2}
 > curl $HOST/v0/pets?age=2
 [{"name": "Lucy", "age": 2}]
+> curl $HOST/v0/random_pet/build
+{"name": "Cujo", "age": 7}
 ```
+
+## Documentation
+
+### Modules (beta)
+Jammin allows you to expose arbitrary functions as API endpoints. For example, we can give API clients access to the filesystem.
+```js
+API.module('/files', {module: require('fs'), async: true})
+```
+Jammin will expose top-level functions in the module as POST requests. Arguments can be passed in via query parameters (with the same names as the function's arguments), a JSON object in the POST body (again, using the function arguments as keys), or a JSON array in the POST body. All three of the following calls are equivalent:
+```bash
+> curl -X POST $HOST/files?path=foo.txt&data=hello
+> curl -X POST $HOST/files -d '{"path": "foo.txt", "data": "hello"}'
+> curl -X POST $HOST/files -d '["foo.txt", "hello"]'
+```
+See the Middleware section below for an example of how to safely expose fs
 
 ### Database Operations
 
@@ -89,6 +130,8 @@ Change ```req.jammin.document``` to alter the document Jammin will insert into t
 
 Change ```req.jammin.method``` to alter how Jammin interacts with the database.
 
+Change ```req.jammin.arguments``` to alter function calls made to modules.
+
 The example below alters ```req.query``` to construct a complex Mongo query from user inputs.
 ```js
 API.Pet.getMany('/search/pets', function(req, res, next) {
@@ -126,6 +169,17 @@ API.Pets.get('/pets');
 API.Pets.post('/pets', setOwnership);
 API.Pets.patch('/pets/:id', ownersOnly);
 API.Pets.delete('/pets/:id', ownersOnly);
+```
+You can also use middleware to alter calls to module functions. The function below 
+```js
+API.module('/files', {module: require('fs'), async: true}, function(req, res, next) {
+  if (req.path.indexOf('Sync') !== -1) return res.status(400).send("Synchronous functions not allowed");
+  // Remove path traversals
+  req.jammin.arguments[0] = Path.join('/', req.jammin.arguments[0]);
+  // Make sure all operations are inside __dirname/user_files
+  req.jammin.arguments[0] = Path.join(__dirname, 'user_files', req.jammin.arguments[0]);
+  next();
+});
 ```
 
 ### Swagger
