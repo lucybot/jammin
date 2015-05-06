@@ -64,7 +64,7 @@ var RemoteFS = new Jammin.Client({
   basePath: '/files',
   host: 'http://127.0.0.1:3000',
   module: require('fs')
-})
+});
 RemoteFS.writeFile('foo.txt', 'Hello World!', function(err) {
   RemoteFS.readFile('foo.txt', function(err, contents) {
     console.log(contents); // Hello World!
