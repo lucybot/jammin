@@ -40,13 +40,6 @@ App.listen(3000);
 API.Pet.get('/pet/:name');
 API.Pet.getMany('/pets')
 ```
-```bash
-> curl $HOST/pets?age=2
-[{"name": "Lucy", "age": 2}, {"name": "Goose", "age": 2}]
-> curl 127.0.0.1:3000/v0/pets/Lucy
-{"name": "Lucy", "age": 2}
-```
-
 **POST** ```post/postMany``` will use ```req.body``` to **create a new item** or set of items in the database.
 ```js
 API.Pet.post('/pets');
@@ -57,13 +50,11 @@ API.Pet.postMany('/pets');
 API.Pet.patch('/pets/:name);
 API.Pet.patchMany('/pets');
 ```
-
 **PUT** ```put/putMany``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items, or create a new item if none exists**
 ```js
 API.Pet.put('/pets/:name');
 API.Pet.putMany('/pets');
 ```
-
 **DELETE** ```delete/deleteMany``` will use ```req.params``` and ```req.query``` to **remove an item** from the database
 ```js
 API.Pet.delete('/pets/:name);
