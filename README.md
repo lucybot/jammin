@@ -28,10 +28,12 @@ App.listen(3000);
 ```
 
 ```bash
-> curl -X POST 127.0.0.1:3000/v0/pets -d '{"name": "Lucy", "age": 2}'
+> curl -X POST $HOST/v0/pets -d '{"name": "Lucy", "age": 2}'
 {"success": true}
-> curl 127.0.0.1:3000/v0/pets/Lucy
+> curl $HOST/v0/pets/Lucy
 {"name": "Lucy", "age": 2}
+> curl $HOST/v0/pets?age=2
+[{"name": "Lucy", "age": 2}]
 ```
 
 ### Database Operations
@@ -62,12 +64,28 @@ API.Pet.delete('/pets/:name);
 API.Pet.deleteMany('/pets');
 ```
 
+### Schemas and Validation
+See the documentation for [Mongoose Schemas](http://mongoosejs.com/docs/guide.html) for the full set of features.
+#### Require fields
+```js
+var PetSchema = {
+  name: {type: String, required: true}
+}
+```
+#### Hide fields
+```js
+var UserSchema = {
+  username: String,
+  password_hash: {type: String, select: false}
+}
+```
+
 ### Middleware
 You can use middleware to intercept database calls, alter the request, perform authentication, etc.
 
-Change ```req.jammin.query``` to alter how Jammin selects items from the database.
+Change ```req.jammin.query``` to alter how Jammin selects items from the database (GET, PATCH, PUT, DELETE).
 
-Change ```req.jammin.document``` to alter the document Jammin will insert into the database.
+Change ```req.jammin.document``` to alter the document Jammin will insert into the database (POST, PATCH, PUT).
 
 Change ```req.jammin.method``` to alter how Jammin interacts with the database.
 
