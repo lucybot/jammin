@@ -80,27 +80,27 @@ RemoteFS.writeFile('foo.txt', 'Hello World!', function(err) {
 
 ### Database Operations
 
-**GET** ```get()/getMany()``` will use ```req.params``` and ```req.query``` to **find an item** or array of items in the database.
+**GET** ```get()``` will use ```req.params``` and ```req.query``` to **find an item** or array of items in the database.
 ```js
 API.Pet.get('/pet/:name');
 API.Pet.getMany('/pets')
 ```
-**POST** ```post()/postMany()``` will use ```req.body``` to **create a new item** or set of items in the database.
+**POST** ```post()``` will use ```req.body``` to **create a new item** or set of items in the database.
 ```js
 API.Pet.post('/pets');
 API.Pet.postMany('/pets');
 ```
-**PATCH** ```patch()/patchMany()``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items**.
+**PATCH** ```patch()``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items**.
 ```js
 API.Pet.patch('/pets/:name);
 API.Pet.patchMany('/pets');
 ```
-**PUT** ```put()/putMany()``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items, or create a new item if none exists**
+**PUT** ```put()``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items, or create a new item if none exists**
 ```js
 API.Pet.put('/pets/:name');
 API.Pet.putMany('/pets');
 ```
-**DELETE** ```delete()/deleteMany()``` will use ```req.params``` and ```req.query``` to **remove an item** from the database
+**DELETE** ```delete()``` will use ```req.params``` and ```req.query``` to **remove an item** from the database
 ```js
 API.Pet.delete('/pets/:name');
 API.Pet.deleteMany('/pets');
