@@ -184,7 +184,7 @@ API.Pets.post('/pets', setOwnership);
 API.Pets.patch('/pets/:id', ownersOnly);
 API.Pets.delete('/pets/:id', ownersOnly);
 ```
-You can also use middleware to alter calls to module functions. The function below 
+You can also use middleware to alter calls to module functions. This function sanitizes calls to fs:
 ```js
 API.module('/files', {module: require('fs'), async: true}, function(req, res, next) {
   if (req.path.indexOf('Sync') !== -1) return res.status(400).send("Synchronous functions not allowed");
