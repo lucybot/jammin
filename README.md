@@ -35,44 +35,31 @@ App.listen(3000);
 
 ### Database Operations
 
-* ```get/getMany``` will use ```req.params``` and ```req.query``` to **find an item** or array of items in the database.
+* **GET** ```get/getMany``` will use ```req.params``` and ```req.query``` to **find an item** or array of items in the database.
 ```js
 API.Pet.get('/pet/:name);
 API.Pet.getMany('/pet')
 ```
-* ```post/postMany``` will use ```req.body``` to **create a new item** or set of items in the database.
+* **POST** ```post/postMany``` will use ```req.body``` to **create a new item** or set of items in the database.
 ```js
 API.Pet.post('/pets');
 API.Pet.postMany('/pets');
 ```
-
-### PATCH
-Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item**.
+* **PATCH** ```patch/patchMany``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items**.
 ```js
 API.Pet.patch('/pets/:name);
-```
-Use ```patchMany``` to update every matching item in the database.
-```js
 API.Pet.patchMany('/pets');
 ```
 
-### PUT
-Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item, or create it if it doesn't exist**
+* **PUT** ```put/putMany``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items, or create a new item if none exists**
 ```js
 API.Pet.put('/pets/:name');
-```
-Use putMany to update every matching item, or create a single new item if there's no match.
-```js
 API.Pet.putMany('/pets');
 ```
 
-### DELETE
-Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
+* **DELETE** ```delete/deleteMany``` will use ```req.params``` and ```req.query``` to **remove an item** from the database
 ```js
 API.Pet.delete('/pets/:name);
-```
-Use deleteMany to delete every matching item in the database.
-```js
 API.Pet.deleteMany('/pets');
 ```
 
