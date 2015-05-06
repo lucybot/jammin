@@ -33,23 +33,16 @@ App.listen(3000);
 {"name": "Lucy", "age": 2}
 ```
 
-### GET
-Jammin will use ```req.params``` and ```req.query``` to **find an item** in the database.
+### Database Operations
+
+* ```get/getMany``` will use ```req.params``` and ```req.query``` to **find an item** or array of items in the database.
 ```js
 API.Pet.get('/pet/:name);
-```
-Use ```getMany``` to return an array of matching documents.
-```js
 API.Pet.getMany('/pet')
 ```
-
-### POST
-Jammin will use ```req.body``` to **create a new item** in the database.
+* ```post/postMany``` will use ```req.body``` to **create a new item** or set of items in the database.
 ```js
 API.Pet.post('/pets');
-```
-Use ```postMany``` to accept an array of items to be created.
-```js
 API.Pet.postMany('/pets');
 ```
 
