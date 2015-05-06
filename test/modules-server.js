@@ -6,7 +6,7 @@ var API = new Jammin.API();
 API.module('/validator', {module: require('validator')});
 API.module('/files', {
   async: true,
-  module: {create: require('fs').writeFile}
+  module: require('fs'),
 }, function(req, res, next) {
   req.jammin.arguments[0] = Path.join('/', req.jammin.arguments[0]);
   req.jammin.arguments[0] = Path.join(__dirname, 'modules-files', req.jammin.arguments[0]);
