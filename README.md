@@ -58,6 +58,19 @@ App.listen(3000);
 > curl -X POST $HOST/v0/files/readFile?path=hello.txt
 Hello World!
 ```
+Use ```Jammin.Client()``` to create a client of the remote module.
+```
+var RemoteFS = new Jammin.Client({
+  basePath: '/files',
+  host: 'http://127.0.0.1:3000',
+  module: require('fs')
+})
+RemoteFS.writeFile('foo.txt', 'Hello World!', function(err) {
+  RemoteFS.readFile('foo.txt', function(err, contents) {
+    console.log(contents); // Hello World!
+  });
+});
+```
 
 ## Documentation
 
