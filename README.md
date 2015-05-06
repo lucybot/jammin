@@ -44,7 +44,6 @@ var PetSchema = {
 
 API.define('Pet', PetSchema);
 API.Pet.get('/pets/:name');
-API.Pet.getMany('/pets')
 API.Pet.post('/pets');
 
 App.use('/v0', API.router);
@@ -56,10 +55,6 @@ App.listen(3000);
 {"success": true}
 > curl $HOST/v0/pets/Lucy
 {"name": "Lucy", "age": 2}
-> curl $HOST/v0/pets?age=2
-[{"name": "Lucy", "age": 2}]
-> curl $HOST/v0/random_pet/build
-{"name": "Cujo", "age": 7}
 ```
 
 ## Documentation
