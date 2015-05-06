@@ -15,6 +15,7 @@ Jammin is fully extensible via middleware to support things like authentication,
 
 ### Modules
 Use API.module() to automatically pass ```req.query``` and ```req.body``` as arguments to a pre-defined set of functions.
+This example exposes filesystem operations to the API client.
 ```js
 var App = require('express')();
 var Jammin = require('jammin');
