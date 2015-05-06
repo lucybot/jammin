@@ -1,7 +1,7 @@
 ## Installation
 ```npm install jammin```
 
-**Note: Jammin is still in alpha. The API is not stable.**
+**Note: Jammin is still in development. The API is not stable.**
 
 ## About
 Jammin is the fastest way to build REST APIs in NodeJS. It consists of:
