@@ -20,6 +20,7 @@ var PetSchema = {
 
 API.define('Pet', PetSchema);
 API.Pet.get('/pets/:name');
+API.Pet.getMany('/pets')
 API.Pet.post('/pets');
 
 App.use('/v0', API.router);
