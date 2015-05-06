@@ -63,7 +63,7 @@ App.listen(3000);
 Hello World!
 ```
 Use ```Jammin.Client()``` to create a client of the remote module.
-```
+```js
 var RemoteFS = new Jammin.Client({
   basePath: '/files',
   host: 'http://127.0.0.1:3000',
