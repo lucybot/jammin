@@ -83,7 +83,9 @@ Jammin allows you to expose arbitrary functions as API endpoints. For example, w
 ```js
 API.module('/files', {module: require('fs'), async: true})
 ```
-Jammin will expose top-level functions in the module as POST requests. Arguments can be passed in via query parameters (with the same names as the function's arguments), a JSON object in the POST body (again, using the function arguments as keys), or a JSON array in the POST body. All three of the following calls are equivalent:
+Jammin will expose top-level functions in the module as POST requests. Arguments can be passed in-order as a JSON array in the POST body. Jammin also parses the function's toString() to get parameter names, allowing arguments to be passed via a JSON object in the POST body (using the parameter names as keys). Strings can also be passed in as query parameters.
+
+All three of the following calls are equivalent:
 ```bash
 > curl -X POST $HOST/files?path=foo.txt&data=hello
 > curl -X POST $HOST/files -d '{"path": "foo.txt", "data": "hello"}'
