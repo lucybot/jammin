@@ -221,7 +221,7 @@ API.swagger('/swagger.json');
 ```
 Jammin will automatically fill out most of your spec, but you can provide additional information:
 ```
-var API = new Jammin({
+var API = new Jammin.API({
   databaseURL: DatabaseURL,
   swagger: {
     info: {title: 'Pet Store'},
