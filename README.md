@@ -94,7 +94,7 @@ API.Pet.postMany('/pets');
 **PATCH**
 ```patch()``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items**.
 ```js
-API.Pet.patch('/pets/:name);
+API.Pet.patch('/pets/:name');
 API.Pet.patchMany('/pets');
 ```
 **PUT**
