@@ -104,7 +104,7 @@ API.Pet.put('/pets/:name');
 API.Pet.putMany('/pets');
 ```
 **DELETE**
-```delete()``` will use ```req.params``` and ```req.query``` to **remove an item** from the database
+```delete()``` will use ```req.params``` and ```req.query``` to **remove an item** or set of items from the database
 ```js
 API.Pet.delete('/pets/:name');
 API.Pet.deleteMany('/pets');
