@@ -98,7 +98,7 @@ API.Pet.patch('/pets/:name');
 API.Pet.patchMany('/pets');
 ```
 **PUT**
-```put()``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items, or create a new item if none exists**
+```put()``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items, or create a new item** if none exists
 ```js
 API.Pet.put('/pets/:name');
 API.Pet.putMany('/pets');
