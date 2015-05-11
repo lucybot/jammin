@@ -1,13 +1,23 @@
 ## Installation
 ```npm install jammin```
 
-**Note: Jammin is still in alpha. The API is not stable.**
+**Note: Jammin is still in development. The API is not stable.**
 
 ## About
-Jammin is the fastest way (that I know of) to build REST APIs in NodeJS. It consists of a light-weight wrapper around [Mongoose](http://mongoosejs.com/) for database operations and an [Express](http://expressjs.com/) router to expose HTTP methods. It is fully extensible via middleware to support things like authentication, resource ownership, and complex queries.
+Jammin is the fastest way to build REST APIs in NodeJS. It consists of:
+* A light-weight wrapper around [Mongoose](http://mongoosejs.com/) to expose database operations
+* A light-weight module wrapper to expose functions as API endpoints
+
+Jammin is built for [Express](http://expressjs.com/) and is fully extensible via **middleware** to support things like authentication, sanitization, and resource ownership.
+
+In addition to performing database CRUD, Jammin can bridge function calls over HTTP. If you have a node module that communicates via JSON-serializable data, Jammin allows you to ```require()``` that module from a remote NodeJS client. See the Modules section for an example.
+
+Jammin can also serve a [Swagger](http://swagger.io) specification, allowing your API to link into tools like [Swagger UI](http://petstore.swagger.io/) and [LucyBot](https://lucybot.com)
 
 ## Usage
 
+### Database Operations
+Use ```API.define()``` to create Mongoose models. You can attach HTTP routes to each model that will use ```req.params``` and ```req.query``` to query the database and ```req.body``` to update it.
 ```js
 var App = require('express')();
 var Jammin = require('jammin');
@@ -27,60 +37,132 @@ App.listen(3000);
 ```
 
 ```bash
-> curl -X POST 127.0.0.1:3000/v0/pets -d '{"name": "Lucy", "age": 2}'
+> curl -X POST $HOST/v0/pets -d '{"name": "Lucy", "age": 2}'
 {"success": true}
-> curl 127.0.0.1:3000/v0/pets/Lucy
+> curl $HOST/v0/pets/Lucy
 {"name": "Lucy", "age": 2}
 ```
 
-### GET
-Jammin will use ```req.params``` and ```req.query``` to **find an item** in the database.
+### Modules (beta)
+Use ```API.module()``` to automatically pass ```req.query``` and ```req.body``` as arguments to a pre-defined set of functions.
+This example exposes filesystem operations to the API client.
 ```js
-API.Pet.get('/pet/:name);
+var App = require('express')();
+var Jammin = require('jammin');
+
+var API = new Jammin.API();
+API.module('/files', {module: require('fs'), async: true});
+
+App.use('/v0', API.router);
+App.listen(3000);
 ```
-Use ```getMany``` to return an array of matching documents.
+```bash
+> curl -X POST $HOST/v0/files/writeFile?path=hello.txt -d {"data": "Hello World!"}
+> curl -X POST $HOST/v0/files/readFile?path=hello.txt
+Hello World!
+```
+Use ```Jammin.Client()``` to create a client of the remote module.
 ```js
-API.Pet.getMany('/pet')
+var RemoteFS = new Jammin.Client({
+  module: require('fs'),
+  basePath: '/files',
+  host: 'http://127.0.0.1:3000',
+});
+RemoteFS.writeFile('foo.txt', 'Hello World!', function(err) {
+  RemoteFS.readFile('foo.txt', function(err, contents) {
+    console.log(contents); // Hello World!
+  });
+});
 ```
 
-### POST
-Jammin will use ```req.body``` to **create a new item** in the database.
+## Documentation
+
+### Database Operations
+
+**GET**
+```get()``` will use ```req.params``` and ```req.query``` to **find an item** or array of items in the database.
+```js
+API.Pet.get('/pet/:name');
+API.Pet.getMany('/pets')
+```
+**POST**
+```post()``` will use ```req.body``` to **create a new item** or set of items in the database.
 ```js
 API.Pet.post('/pets');
-```
-Use ```postMany``` to accept an array of items to be created.
-```js
 API.Pet.postMany('/pets');
 ```
-
-### PATCH
-Jammin will use ```req.params``` and ```req.query``` to find an item in the database, and use ```req.body``` to **update that item**.
+**PATCH**
+```patch()``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items**.
 ```js
-API.Pet.patch('/pets/:name);
-```
-Use ```patchMany``` to update every matching item in the database.
-```js
+API.Pet.patch('/pets/:name');
 API.Pet.patchMany('/pets');
 ```
-
-### DELETE
-Jammin will use ```req.params``` and ```req.query``` to **remove an item** from the database.
+**PUT**
+```put()``` will use ```req.params``` and ```req.query``` to find an item or set of items in the database, and use ```req.body``` to **update those items, or create a new item** if none exists
 ```js
-API.Pet.delete('/pets/:name);
+API.Pet.put('/pets/:name');
+API.Pet.putMany('/pets');
 ```
-Use deleteMany to delete every matching item in the database.
+**DELETE**
+```delete()``` will use ```req.params``` and ```req.query``` to **remove an item** or set of items from the database
 ```js
+API.Pet.delete('/pets/:name');
 API.Pet.deleteMany('/pets');
+```
+
+### Schemas and Validation
+See the documentation for [Mongoose Schemas](http://mongoosejs.com/docs/guide.html) for the full set of features.
+#### Require fields
+```js
+var PetSchema = {
+  name: {type: String, required: true}
+}
+```
+#### Hide fields
+```js
+var UserSchema = {
+  username: String,
+  password_hash: {type: String, select: false}
+}
+```
+
+### Modules (beta)
+Jammin allows you to expose arbitrary functions as API endpoints. For example, we can give API clients access to the filesystem.
+```js
+API.module('/files', {module: require('fs'), async: true})
+```
+Jammin will expose top-level functions in the module as POST requests. Arguments can be passed in-order as a JSON array in the POST body. Jammin also parses the function's toString() to get parameter names, allowing arguments to be passed via a JSON object in the POST body (using the parameter names as keys). Strings can also be passed in as query parameters.
+
+All three of the following calls are equivalent:
+```bash
+> curl -X POST $HOST/files?path=foo.txt&data=hello
+> curl -X POST $HOST/files -d '{"path": "foo.txt", "data": "hello"}'
+> curl -X POST $HOST/files -d '["foo.txt", "hello"]'
+```
+See the Middleware section below for an example of how to more safely expose fs
+
+Jammin also provides clients for exposed modules. This allows you to bridge function calls over HTTP, effectively allowing you to ```require()``` modules from a remote client.
+
+This allows you to quickly containerize node modules that communicate via JSON-serializable data, e.g. to place a particularly expensive operation behind a load balancer, or to run potentially malicious code inside a sandboxed container.
+
+```js
+var RemoteFS = new Jammin.Client({
+  module: require('fs'),
+  basePath: '/files',
+  host: 'http://127.0.0.1:3000',
+});
 ```
 
 ### Middleware
 You can use middleware to intercept database calls, alter the request, perform authentication, etc.
 
-Change ```req.jammin.query``` to alter how Jammin selects items from the database.
+Change ```req.jammin.query``` to alter how Jammin selects items from the database (GET, PATCH, PUT, DELETE).
 
-Change ```req.jammin.document``` to alter the document Jammin will insert into the database.
+Change ```req.jammin.document``` to alter the document Jammin will insert into the database (POST, PATCH, PUT).
 
 Change ```req.jammin.method``` to alter how Jammin interacts with the database.
+
+Change ```req.jammin.arguments``` to alter function calls made to modules.
 
 The example below alters ```req.query``` to construct a complex Mongo query from user inputs.
 ```js
@@ -120,15 +202,26 @@ API.Pets.post('/pets', setOwnership);
 API.Pets.patch('/pets/:id', ownersOnly);
 API.Pets.delete('/pets/:id', ownersOnly);
 ```
+You can also use middleware to alter calls to module functions. This function sanitizes calls to fs:
+```js
+API.module('/files', {module: require('fs'), async: true}, function(req, res, next) {
+  if (req.path.indexOf('Sync') !== -1) return res.status(400).send("Synchronous functions not allowed");
+  // Remove path traversals
+  req.jammin.arguments[0] = Path.join('/', req.jammin.arguments[0]);
+  // Make sure all operations are inside __dirname/user_files
+  req.jammin.arguments[0] = Path.join(__dirname, 'user_files', req.jammin.arguments[0]);
+  next();
+});
+```
 
-### Swagger
+### Swagger (beta)
 Serve a [Swagger specification](http://swagger.io) for your API at the specified path. You can use this to document your API via [Swagger UI](https://github.com/swagger-api/swagger-ui) or a [LucyBot portal](https://lucybot.com)
 ```js
 API.swagger('/swagger.json');
 ```
 Jammin will automatically fill out most of your spec, but you can provide additional information:
 ```
-var API = new Jammin({
+var API = new Jammin.API({
   databaseURL: DatabaseURL,
   swagger: {
     info: {title: 'Pet Store'},
