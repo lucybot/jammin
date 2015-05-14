@@ -16,11 +16,16 @@ var NestedModule = new Jammin.Client({
   basePath: '/nest',
   host: 'http://127.0.0.1:3333',
   module: {foo: true, nest: {bar: true, baz: true}}
-})
+});
+var ErrorModule = new Jammin.Client({
+  basePath: '/error',
+  host: 'http://127.0.0.1:3333',
+  module: {throwError: true, callbackError: true}
+});
 
 var Server = require('./modules-server.js');
 
-var Expect = require('chai').expect;
+var expect = require('chai').expect;
 
 var FILES = [{
   in_filename: 'hello.txt',
@@ -48,15 +53,15 @@ describe('Validator', function() {
     Async.parallel([
       function(callback) {
         Validator.isEmail('foo@bar.com', function(err, isEmail) {
-          Expect(err).to.equal(null);
-          Expect(isEmail).to.equal(true);
+          expect(err).to.equal(null);
+          expect(isEmail).to.equal(true);
           callback();
         });
       },
       function(callback) {
         Validator.isEmail('foobar.com', function(err, isEmail) {
-          Expect(err).to.equal(null);
-          Expect(isEmail).to.equal(false);
+          expect(err).to.equal(null);
+          expect(isEmail).to.equal(false);
           callback();
         });
       }
@@ -71,14 +76,14 @@ describe('RemoteFS', function() {
 
   it('should allow creating files', function(done) {
     RemoteFS.writeFile(FILES[0].in_filename, FILES[0].contents, function(err) {
-      Expect(err).to.equal(null);
+      expect(err).to.equal(null);
       done();
     });
   });
 
   it('should not create files outside of directory', function(done) {
     RemoteFS.writeFile(FILES[1].in_filename, FILES[1].contents, function(err) {
-      Expect(err).to.equal(null);
+      expect(err).to.equal(null);
       done();
     })
   });
@@ -92,7 +97,7 @@ describe('RemoteFS', function() {
       },
       json: true,
     }, function(err, resp, body) {
-      Expect(err).to.equal(null);
+      expect(err).to.equal(null);
       done();
     })
   });
@@ -101,8 +106,8 @@ describe('RemoteFS', function() {
     Async.parallel(FILES.map(function(file) {
       return function(callback) {
         RemoteFS.readFile(file.out_filename, 'utf8', function(err, contents) {
-          Expect(err).to.equal(null);
-          Expect(contents).to.equal(file.contents);
+          expect(err).to.equal(null);
+          expect(contents).to.equal(file.contents);
           callback();
         });
       }
@@ -115,16 +120,32 @@ describe('RemoteFS', function() {
 describe('nested modules', function() {
   it('should have top level function', function(done) {
     NestedModule.foo(function(err, foo) {
-      Expect(err).to.equal(null);
-      Expect(foo).to.equal('foo');
+      expect(err).to.equal(null);
+      expect(foo).to.equal('foo');
       done();
     });
   });
 
   it('should have nested functions', function(done) {
     NestedModule.nest.bar(function(err, bar) {
-      Expect(err).to.equal(null);
-      Expect(bar).to.equal('bar');
+      expect(err).to.equal(null);
+      expect(bar).to.equal('bar');
+      done();
+    });
+  });
+});
+
+describe('errors', function() {
+  it('should be able to be thrown', function(done) {
+    ErrorModule.throwError(function(err) {
+      expect(err).to.equal("Error: thrown");
+      done();
+    });
+  });
+
+  it('should be able to be called back', function(done) {
+    ErrorModule.callbackError(function(err) {
+      expect(err).to.deep.equal({message: "callback"})
       done();
     })
   })

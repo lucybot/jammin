@@ -22,8 +22,23 @@ var NestedModule = {
 }
 API.module('/nest', {module: NestedModule});
 
+var ErrorModule = {
+  throwError: function() {
+    throw new Error("thrown");
+  },
+  callbackError: function(callback) {
+    callback({message: "callback"});
+  }
+}
+API.module('/error', {module: ErrorModule, async: true})
+
 var App = require('express')();
 App.use(API.router);
+
+App.use(function(err, req, res, next) {
+  if (err) console.log('Error found');
+  next();
+})
 
 var Server = null;
 module.exports.listen = function(port) {
