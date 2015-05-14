@@ -13,6 +13,15 @@ API.module('/files', {
   next();
 })
 
+var NestedModule = {
+  foo: function() {return 'foo'},
+  nest: {
+    bar: function() {return 'bar'},
+    baz: function() {return 'baz'}
+  }
+}
+API.module('/nest', {module: NestedModule});
+
 var App = require('express')();
 App.use(API.router);
 

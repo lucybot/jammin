@@ -11,6 +11,11 @@ var RemoteFS = new Jammin.Client({
   basePath: '/files',
   host: 'http://127.0.0.1:3333',
   module: require('fs')
+});
+var NestedModule = new Jammin.Client({
+  basePath: '/nest',
+  host: 'http://127.0.0.1:3333',
+  module: {foo: true, nest: {bar: true, baz: true}}
 })
 
 var Server = require('./modules-server.js');
@@ -104,5 +109,23 @@ describe('RemoteFS', function() {
     }), function(err) {
       done();
     })
-  })
+  });
 });
+
+describe('nested modules', function() {
+  it('should have top level function', function(done) {
+    NestedModule.foo(function(err, foo) {
+      Expect(err).to.equal(null);
+      Expect(foo).to.equal('foo');
+      done();
+    });
+  });
+
+  it('should have nested functions', function(done) {
+    NestedModule.nest.bar(function(err, bar) {
+      Expect(err).to.equal(null);
+      Expect(bar).to.equal('bar');
+      done();
+    })
+  })
+})
