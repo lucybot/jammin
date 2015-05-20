@@ -13,7 +13,8 @@
     "express": "^4.12.3",
     "get-parameter-names": "^0.2.0",
     "mongoose": "^4.0.1",
-    "path-to-regexp": "^1.0.3"
+    "path-to-regexp": "^1.0.3",
+    "request": "^2.55.0"
   },
   "devDependencies": {
     "async": "^0.9.0",
