@@ -220,7 +220,7 @@ Serve a [Swagger specification](http://swagger.io) for your API at the specified
 API.swagger('/swagger.json');
 ```
 Jammin will automatically fill out most of your spec, but you can provide additional information:
-```
+```js
 var API = new Jammin.API({
   databaseURL: DatabaseURL,
   swagger: {
