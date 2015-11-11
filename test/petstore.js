@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var FS = require('fs');
 var Request = require('request');
 var Expect = require('chai').expect;
@@ -41,6 +42,8 @@ var successResponse = function(expectedBody, done) {
       if (Array.isArray(expectedBody)) {
         Expect(body).to.deep.have.members(expectedBody);
         Expect(expectedBody).to.deep.have.members(body);
+      } if (typeof expectedBody === 'function') {
+        expectedBody(body);
       } else {
         Expect(body).to.deep.equal(expectedBody);
       }
@@ -59,6 +62,7 @@ var failResponse = function(statusCode, done) {
 }
 
 describe('Petstore', function() {
+  this.timeout(4000);
   before(function(done) {
     Petstore.listen(3333);
     Petstore.dropAllEntries(done);
@@ -69,20 +73,31 @@ describe('Petstore', function() {
       url: BASE_URL + '/users',
       body: USER_1,
       json: true
-    }, successResponse(null, done));
+    }, successResponse(function(user) {
+      Expect(user._id.length).to.be.above(0);
+      Expect(user.password_hash.length).to.be.above(0);
+      Expect(user.username).to.equal(USER_1.username);
+      Expect(user.password).to.equal(undefined);
+      USER_1._id = user._id;
+    }, done));
   });
 
   it('should not show password_hash', function(done) {
     Request.get({
       url: BASE_URL + '/users',
       json: true,
-    }, successResponse([{username: USER_1.username}], done))
+    }, successResponse(function(users) {
+      Expect(users[0].password_hash).to.equal(undefined);
+      var expected = _.extend({}, USER_1);
+      delete expected.password;
+      Expect(users).to.deep.equal([expected])
+    }, done))
   });
 
   it('should not allow duplicate user names', function(done) {
     Request.post({
       url: BASE_URL + '/users',
-      body: USER_1,
+      body: {username: USER_1.username, password: 'swordfish'},
       json: true
     }, failResponse(500, done));
   })
@@ -92,27 +107,35 @@ describe('Petstore', function() {
       url: BASE_URL + '/users',
       body: USER_2,
       json: true
-    }, successResponse(null, done));
+    }, successResponse(function(user) {
+      USER_2._id = user._id;
+      Expect(user.username).to.equal(USER_2.username);
+    }, done));
   })
 
   it('should allow new pets', function(done) {
     CurrentPets.push(PETS[1]);
     Request.post({
-      url: BASE_URL + '/pets',
+      url: BASE_URL + '/pets/1',
       body: {id: 1, name: PETS[1].name, animalType: PETS[1].animalType},
       headers: USER_1,
       json: true
-    }, successResponse(null, done));
+    }, successResponse(function(pet) {
+      PETS[1]._id = pet._id;
+      Expect(pet).to.deep.equal(PETS[1]);
+    }, done));
   })
 
   it('should allow a second pet', function(done) {
     CurrentPets.push(PETS[2]);
     Request.post({
-      url: BASE_URL + '/pets',
+      url: BASE_URL + '/pets/2',
       body: {id: 2, name: PETS[2].name, animalType: PETS[2].animalType},
       headers: USER_2,
       json: true
-    }, successResponse(null, done));
+    }, successResponse(function(pet) {
+      Expect(pet.name).to.equal(PETS[2].name);
+    }, done));
   })
 
   it('should upsert on post', function(done) {
@@ -122,7 +145,10 @@ describe('Petstore', function() {
       body: PETS[2],
       headers: USER_2,
       json: true
-    }, successResponse(null, done))
+    }, successResponse(function(pet) {
+      PETS[2]._id = pet._id;
+      Expect(pet).to.deep.equal(PETS[2]);
+    }, done))
   })
 
   it('should not allow modifications from wrong user', function(done) {
@@ -217,13 +243,18 @@ describe('Petstore', function() {
   })
 
   it('should allow batched adds of pets', function(done) {
-    CurrentPets.unshift(PETS[3], PETS[4], PETS[5]);
+    CurrentPets = CurrentPets.concat([PETS[3], PETS[4], PETS[5]]);
     Request.post({
       url: BASE_URL + '/pets',
       headers: USER_1,
       body: [PETS[3], PETS[4], PETS[5]],
       json: true
-    }, successResponse(null, done))
+    }, successResponse(function(pets) {
+      Expect(pets.length).to.equal(3);
+      pets.forEach(function(pet) {
+        PETS.filter(function(p) {return p.name === pet.name})[0]._id = pet._id;
+      })
+    }, done));
   })
 
   it('should allow batched modification of pets', function(done) {

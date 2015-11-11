@@ -17,51 +17,7 @@
       "type": "string"
     }
   },
-  "definitions": {
-    "Pet": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "number"
-        },
-        "name": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "animalType": {
-          "type": "string"
-        },
-        "vaccinations": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "date": {
-                "type": "string",
-                "format": "date"
-              }
-            }
-          }
-        }
-      }
-    },
-    "User": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "password_hash": {
-          "type": "string"
-        }
-      }
-    }
-  },
+  "definitions": {},
   "swagger": "2.0",
   "paths": {
     "/users": {
@@ -91,20 +47,7 @@
       },
       "get": {
         "description": "Retrieves an array of Users",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by username"
-          },
-          {
-            "name": "password_hash",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by password_hash"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "An array of Users",
@@ -125,32 +68,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "string",
             "description": "Select by id"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string",
-            "description": "Select by name"
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "type": "string",
-            "description": "Select by owner"
-          },
-          {
-            "name": "animalType",
-            "in": "query",
-            "type": "string",
-            "description": "Select by animalType"
-          },
-          {
-            "name": "vaccinations",
-            "in": "query",
-            "type": "array",
-            "description": "Select by vaccinations"
           }
         ],
         "responses": {
@@ -172,7 +91,7 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "string",
             "description": "Select by id"
           },
           {
@@ -200,32 +119,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "string",
             "description": "Select by id"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string",
-            "description": "Select by name"
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "type": "string",
-            "description": "Select by owner"
-          },
-          {
-            "name": "animalType",
-            "in": "query",
-            "type": "string",
-            "description": "Select by animalType"
-          },
-          {
-            "name": "vaccinations",
-            "in": "query",
-            "type": "array",
-            "description": "Select by vaccinations"
           },
           {
             "name": "body",
@@ -255,32 +150,8 @@
           {
             "name": "id",
             "in": "path",
-            "type": "number",
+            "type": "string",
             "description": "Select by id"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string",
-            "description": "Select by name"
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "type": "string",
-            "description": "Select by owner"
-          },
-          {
-            "name": "animalType",
-            "in": "query",
-            "type": "string",
-            "description": "Select by animalType"
-          },
-          {
-            "name": "vaccinations",
-            "in": "query",
-            "type": "array",
-            "description": "Select by vaccinations"
           }
         ],
         "responses": {
@@ -293,38 +164,7 @@
     "/pets": {
       "get": {
         "description": "Retrieves an array of Pets",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "type": "number",
-            "description": "Filter by id"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by name"
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by owner"
-          },
-          {
-            "name": "animalType",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by animalType"
-          },
-          {
-            "name": "vaccinations",
-            "in": "query",
-            "type": "array",
-            "description": "Filter by vaccinations"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "An array of Pets",
@@ -370,36 +210,6 @@
         "description": "Updates an array of Pets",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
-            "type": "number",
-            "description": "Filter by id"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by name"
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by owner"
-          },
-          {
-            "name": "animalType",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by animalType"
-          },
-          {
-            "name": "vaccinations",
-            "in": "query",
-            "type": "array",
-            "description": "Filter by vaccinations"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -423,38 +233,7 @@
           "password": []
         },
         "description": "Removes an array of Pets",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "type": "number",
-            "description": "Filter by id"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by name"
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by owner"
-          },
-          {
-            "name": "animalType",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by animalType"
-          },
-          {
-            "name": "vaccinations",
-            "in": "query",
-            "type": "array",
-            "description": "Filter by vaccinations"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success"
@@ -489,38 +268,7 @@
     "/pet_types": {
       "get": {
         "description": "Retrieves an array of Pets",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "type": "number",
-            "description": "Filter by id"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by name"
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by owner"
-          },
-          {
-            "name": "animalType",
-            "in": "query",
-            "type": "string",
-            "description": "Filter by animalType"
-          },
-          {
-            "name": "vaccinations",
-            "in": "query",
-            "type": "array",
-            "description": "Filter by vaccinations"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "An array of Pets",

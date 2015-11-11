@@ -1,5 +1,6 @@
 var FS = require('fs');
 var Hash = require('password-hash');
+var Mongoose = require('mongoose');
 var App = require('express')();
 App.use(require('cors')());
 
@@ -42,18 +43,20 @@ var API = new Jammin.API({
 
 var UserSchema = {
   username: {type: String, required: true, unique: true, match: /^\w+$/},
-  password_hash: {type: String, required: true, select: false}
+  password_hash: {type: String, required: true, select: false},
 }
+
+var vaccSchema = Mongoose.Schema({
+  name: String,
+  date: Date,
+}, {_id: false})
 
 var PetSchema = {
   id: {type: Number, required: true, unique: true},
   name: String,
   owner: String,
   animalType: {type: String, default: 'unknown'},
-  vaccinations: [{
-    name: String,
-    date: Date
-  }]
+  vaccinations: [vaccSchema]
 }
 
 var authenticateUser = function(req, res, next) {
@@ -80,8 +83,8 @@ var SwaggerLogin = {
   }
 }
 
-API.define('Pet', PetSchema);
-API.define('User', UserSchema);
+API.addModel('Pet', API.mongoose.model('Pet', new Mongoose.Schema(PetSchema)));
+API.addModel('User', API.mongoose.model('User', new Mongoose.Schema(UserSchema)));
 
 // Creates a new user.
 API.User.post('/users', {
