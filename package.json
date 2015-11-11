@@ -13,7 +13,7 @@
     "express": "^4.12.3",
     "get-parameter-names": "^0.2.0",
     "lodash": "^3.10.1",
-    "mongoose": "^4.0.1",
+    "mongoose": "^4.2.0",
     "path-to-regexp": "^1.0.3",
     "request": "^2.55.0"
   },

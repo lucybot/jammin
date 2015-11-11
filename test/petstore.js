@@ -282,7 +282,10 @@ describe('Petstore', function() {
         animalType: 'dog'
       },
       json: true
-    }, successResponse(CurrentPets.filter(function(pet) {return pet.animalType === 'dog'}), done))
+    }, successResponse(function(pets) {
+      var expected = CurrentPets.filter(function(pet) {return pet.animalType === 'dog'});
+      Expect(pets.length).to.equal(expected.length)
+    }, done))
   })
 
   it('should support pet_count', function(done) {
