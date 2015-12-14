@@ -150,11 +150,11 @@ API.router.use('/pets', function(req, res, next) {
 Or resource ownership:
 ```js
 var setOwnership = function(req, res, next) {
-  req.jammin.document.owner = req.user.username;
+  req.jammin.document.owner = req.user._id;
   next();
 }
 var ownersOnly = function(req, res, next) {
-  req.jammin.query.owner = {"$eq": req.user.username};
+  req.jammin.query.owner = {"$eq": req.user._id};
   next();
 }
 API.Pets.get('/pets');
