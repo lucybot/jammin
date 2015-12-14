@@ -163,3 +163,20 @@ API.Pets.patch('/pets/:id', ownersOnly);
 API.Pets.delete('/pets/:id', ownersOnly);
 ```
 
+### Manual Calls and Intercepting Results
+You can manually run a Jammin query and view the results before sending them to the user. Simply call the operation you want without a path.
+
+Jammin will automatically handle 404 and 500 errors, but will pass the results of successful operations to your callback.
+
+```js
+app.get('/pets', function(req, res) {
+  API.Pets.getMany(req, res, function(pets) {
+    res.json(pets);
+  })
+})
+
+If you'd like more direct access, you can also access the underlying model:
+
+```js
+API.pets.model.findOneAndUpdate(...);
+```
