@@ -176,7 +176,7 @@ describe('Petstore', function() {
       url: BASE_URL + '/search/pets',
       qs: {q: 'oose'},
       json: true
-    }, successResponse([PETS[1], PETS[2]], done))
+    }, successResponse([PETS[2], PETS[1]], done))
   })
 
   it('should not allow duplicate pets', function(done) {
