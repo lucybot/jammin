@@ -157,10 +157,10 @@ var ownersOnly = function(req, res, next) {
   req.jammin.query.owner = {"$eq": req.user._id};
   next();
 }
-API.Pets.get('/pets');
-API.Pets.post('/pets', setOwnership);
-API.Pets.patch('/pets/:id', ownersOnly);
-API.Pets.delete('/pets/:id', ownersOnly);
+API.Pet.get('/pets');
+API.Pet.post('/pets', setOwnership);
+API.Pet.patch('/pets/:id', ownersOnly);
+API.Pet.delete('/pets/:id', ownersOnly);
 ```
 
 ### Manual Calls and Intercepting Results
@@ -170,7 +170,7 @@ Jammin will automatically handle 404 and 500 errors, but will pass the results o
 
 ```js
 app.get('/pets', function(req, res) {
-  API.Pets.getMany(req, res, function(pets) {
+  API.Pet.getMany(req, res, function(pets) {
     res.json(pets);
   })
 })
