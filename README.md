@@ -176,7 +176,7 @@ app.get('/pets', function(req, res) {
 })
 ```
 
-If you'd like more direct access, you can also access the underlying model:
+If you'd like to handle errors manually, you can also access the underlying model:
 
 ```js
 API.pets.model.findOneAndUpdate(...);
