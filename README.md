@@ -52,7 +52,7 @@ App.listen(3000);
 **GET**
 ```get()``` will use ```req.params``` and ```req.query``` to **find an item** or array of items in the database.
 ```js
-API.Pet.get('/pet/:name');
+API.Pet.get('/pets/:name');
 API.Pet.getMany('/pets')
 ```
 **POST**
