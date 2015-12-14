@@ -179,5 +179,5 @@ app.get('/pets', function(req, res) {
 If you'd like to handle errors manually, you can also access the underlying model:
 
 ```js
-API.pets.model.findOneAndUpdate(...);
+API.Pets.model.findOneAndUpdate(...);
 ```
