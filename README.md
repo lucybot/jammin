@@ -173,23 +173,3 @@ API.module('/files', {module: require('fs'), async: true}, function(req, res, ne
   next();
 });
 ```
-
-### Swagger (beta)
-Serve a [Swagger specification](http://swagger.io) for your API at the specified path. You can use this to document your API via [Swagger UI](https://github.com/swagger-api/swagger-ui) or a [LucyBot portal](https://lucybot.com)
-```js
-API.swagger('/swagger.json');
-```
-Jammin will automatically fill out most of your spec, but you can provide additional information:
-```js
-var API = new Jammin.API({
-  databaseURL: DatabaseURL,
-  swagger: {
-    info: {title: 'Pet Store'},
-    host: 'api.example.com',
-    basePath: '/api'
-  }
-});
-```
-
-## Extended Usage
-See the example [Petstore Server](test/petstore-server.js) for other examples.
