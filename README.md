@@ -174,6 +174,7 @@ app.get('/pets', function(req, res) {
     res.json(pets);
   })
 })
+```
 
 If you'd like more direct access, you can also access the underlying model:
 
