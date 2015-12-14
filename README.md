@@ -7,8 +7,6 @@ To see documentation for the version on npm (0.2.1) visit
 ## Installation
 ```npm install lucybot/jammin```
 
-**Note: Jammin is still in development. The API is not stable.**
-
 ## About
 Jammin is the fastest way to build REST APIs in NodeJS. It consists of:
 * A light-weight wrapper around [Mongoose](http://mongoosejs.com/) to perform database operations
