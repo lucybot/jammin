@@ -1,5 +1,5 @@
 # Verson 1.0 Preview
-* This README is for the upcoming 1.0 version *
+**This README is for the upcoming 1.0 version**
 
 To see documentation for the version on npm (0.2.1) visit
 [README-v0.md](README-v0.md)
