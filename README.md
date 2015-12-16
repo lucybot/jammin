@@ -24,10 +24,10 @@ var Mongoose = require('mongoose');
 var Jammin = require('jammin');
 var API = new Jammin.API('mongodb://<username>:<password>@<mongodb_host>');
 
-var PetSchema = {
+var PetSchema = Mongoose.Schema({
   name: String,
   age: Number
-};
+});
 
 var Pet = Mongoose.model('Pet', PetSchema);
 API.addModel('Pet', Pet);
