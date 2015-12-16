@@ -110,6 +110,7 @@ Jammin also comes with prepackaged middleware to support the following Mongoose 
 `limit`, `sort`, `skip`, `projection`, `populate`, `select`
 
 #### Examples
+Here are three equivalent ways to sort the results and limit how many are returned.
 ```js
 var J = require('jammin').middleware
 
