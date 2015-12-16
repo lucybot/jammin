@@ -169,7 +169,7 @@ You can manually run a Jammin query and view the results before sending them to 
 Jammin will automatically handle 404 and 500 errors, but will pass the results of successful operations to your callback.
 
 ```js
-app.get('/pets', function(req, res) {
+app.get('/pets', J.limit(20), function(req, res) {
   API.Pet.getMany(req, res, function(pets) {
     res.json(pets);
   })
