@@ -1,13 +1,11 @@
 # Verson 1.0 Preview
-* This README is for the upcoming 1.0 version *
+**This README is for the upcoming 1.0 version**
 
 To see documentation for the version on npm (0.2.1) visit
 [README-v0.md](README-v0.md)
 
 ## Installation
 ```npm install lucybot/jammin```
-
-**Note: Jammin is still in development. The API is not stable.**
 
 ## About
 Jammin is the fastest way to build REST APIs in NodeJS. It consists of:
@@ -26,10 +24,10 @@ var Mongoose = require('mongoose');
 var Jammin = require('jammin');
 var API = new Jammin.API('mongodb://<username>:<password>@<mongodb_host>');
 
-var PetSchema = {
+var PetSchema = Mongoose.Schema({
   name: String,
   age: Number
-};
+});
 
 var Pet = Mongoose.model('Pet', PetSchema);
 API.addModel('Pet', Pet);
@@ -54,7 +52,7 @@ App.listen(3000);
 **GET**
 ```get()``` will use ```req.params``` and ```req.query``` to **find an item** or array of items in the database.
 ```js
-API.Pet.get('/pet/:name');
+API.Pet.get('/pets/:name');
 API.Pet.getMany('/pets')
 ```
 **POST**
@@ -112,6 +110,7 @@ Jammin also comes with prepackaged middleware to support the following Mongoose 
 `limit`, `sort`, `skip`, `projection`, `populate`, `select`
 
 #### Examples
+Here are three equivalent ways to sort the results and limit how many are returned.
 ```js
 var J = require('jammin').middleware
 
@@ -152,46 +151,34 @@ API.router.use('/pets', function(req, res, next) {
 Or resource ownership:
 ```js
 var setOwnership = function(req, res, next) {
-  req.jammin.document.owner = req.user.username;
+  req.jammin.document.owner = req.user._id;
   next();
 }
 var ownersOnly = function(req, res, next) {
-  req.jammin.query.owner = {"$eq": req.user.username};
+  req.jammin.query.owner = {"$eq": req.user._id};
   next();
 }
-API.Pets.get('/pets');
-API.Pets.post('/pets', setOwnership);
-API.Pets.patch('/pets/:id', ownersOnly);
-API.Pets.delete('/pets/:id', ownersOnly);
-```
-You can also use middleware to alter calls to module functions. This function sanitizes calls to fs:
-```js
-API.module('/files', {module: require('fs'), async: true}, function(req, res, next) {
-  if (req.path.indexOf('Sync') !== -1) return res.status(400).send("Synchronous functions not allowed");
-  // Remove path traversals
-  req.jammin.arguments[0] = Path.join('/', req.jammin.arguments[0]);
-  // Make sure all operations are inside __dirname/user_files
-  req.jammin.arguments[0] = Path.join(__dirname, 'user_files', req.jammin.arguments[0]);
-  next();
-});
+API.Pet.get('/pets');
+API.Pet.post('/pets', setOwnership);
+API.Pet.patch('/pets/:id', ownersOnly);
+API.Pet.delete('/pets/:id', ownersOnly);
 ```
 
-### Swagger (beta)
-Serve a [Swagger specification](http://swagger.io) for your API at the specified path. You can use this to document your API via [Swagger UI](https://github.com/swagger-api/swagger-ui) or a [LucyBot portal](https://lucybot.com)
+### Manual Calls and Intercepting Results
+You can manually run a Jammin query and view the results before sending them to the user. Simply call the operation you want without a path.
+
+Jammin will automatically handle 404 and 500 errors, but will pass the results of successful operations to your callback.
+
 ```js
-API.swagger('/swagger.json');
-```
-Jammin will automatically fill out most of your spec, but you can provide additional information:
-```js
-var API = new Jammin.API({
-  databaseURL: DatabaseURL,
-  swagger: {
-    info: {title: 'Pet Store'},
-    host: 'api.example.com',
-    basePath: '/api'
-  }
-});
+app.get('/pets', J.limit(20), function(req, res) {
+  API.Pet.getMany(req, res, function(pets) {
+    res.json(pets);
+  })
+})
 ```
 
-## Extended Usage
-See the example [Petstore Server](test/petstore-server.js) for other examples.
+If you'd like to handle errors manually, you can also access the underlying model:
+
+```js
+API.Pet.model.findOneAndUpdate(...);
+```
