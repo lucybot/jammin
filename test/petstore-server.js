@@ -42,9 +42,7 @@ var authenticateUser = function(req, res, next) {
   var query = {
     username: req.headers['username'],
   };
-  console.log('find user');
   API.User.model.findOne(query).select('+password_hash').exec(function(err, user) {
-    console.log('found', err, user);
     if (err) {
       res.status(500).json({error: err.toString()})
     } else if (!user || !user.password_hash) {
@@ -94,7 +92,6 @@ API.Pet.post('/pets/:id', upsert, authenticateUser, function(req, res, next) {
 
 // Creates one or more new pets.
 API.Pet.postMany('/pets', authenticateUser, function(req, res, next) {
-  console.log('postMany pets', req.jammin.document)
   if (!Array.isArray(req.jammin.document)) req.jammin.document = [req.jammin.document];
   req.jammin.document.forEach(function(pet) {
     pet.owner = req.user.username;

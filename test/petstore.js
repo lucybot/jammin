@@ -4,7 +4,6 @@ var Request = require('request');
 var Expect = require('chai').expect;
 var Petstore = require('./petstore-server.js');
 
-var SWAGGER_GOLDEN_FILE = __dirname + '/golden/petstore.swagger.json';
 var BASE_URL = 'http://127.0.0.1:3333/api';
 
 var USER_1 = {username: 'user1', password: 'jabberwocky'}
@@ -175,7 +174,7 @@ describe('Petstore', function() {
       url: BASE_URL + '/search/pets',
       qs: {q: 'oose'},
       json: true
-    }, successResponse([PETS[2], PETS[1]], done))
+    }, successResponse([PETS[1], PETS[2]], done))
   })
 
   it('should not allow duplicate pets', function(done) {
@@ -329,22 +328,5 @@ describe('Petstore', function() {
       },
       json: true
     }, successResponse(null, done))
-  })
-
-  it('should serve swagger docs', function(done) {
-    Request.get({
-      url: BASE_URL + '/swagger.json',
-      json: true
-    }, function(err, res, body) {
-      Expect(err).to.equal(null);
-      if (process.env.WRITE_GOLDEN) {
-        console.log("Writing new golden file!");
-        FS.writeFileSync(SWAGGER_GOLDEN_FILE, JSON.stringify(body, null, 2));
-      } else {
-        var golden = JSON.parse(FS.readFileSync(SWAGGER_GOLDEN_FILE, 'utf8'));
-        Expect(body).to.deep.equal(golden);
-      }
-      done();
-    })
   })
 })
