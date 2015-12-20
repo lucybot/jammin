@@ -1,69 +1,50 @@
 var FS = require('fs');
 var Hash = require('password-hash');
 var Mongoose = require('mongoose');
+require('mockgoose')(Mongoose);
 var App = require('express')();
 App.use(require('cors')());
 
-module.exports.listen = function(port) {
+module.exports.listen = function(port, done) {
   console.log('listening: ' + port);
   App.listen(port || 3000);
+  Mongoose.connect('mongodb://example.com/TestingDB', done);
 }
 
-module.exports.dropAllEntries = function(callback) {
-  API.Pet.db.remove({}, function(err) {
-    if (err) throw err;
-    API.User.db.remove({}, function(err) {
-      if (err) throw err;
-      callback();
-    })
-  })
-}
-
-var DatabaseURL = JSON.parse(FS.readFileSync('./creds/mongo.json', 'utf8')).url;
-var Jammin = require('../index.js')
+var Jammin = require('../index.js'),
+    J = Jammin.middleware;
 var API = new Jammin.API({
-  databaseURL: DatabaseURL,
-  swagger: {
-    info: {title: 'Pet Store', version: '0.1'},
-    host: 'api.example.com',
-    basePath: '/api',
-    securityDefinitions: {
-      username: { name: 'username', in: 'header', type: 'string'},
-      password: { name: 'password', in: 'header', type: 'string'}
-    },
-    definitions: {
-      User: {
-        properties: {
-          username: {type: 'string'},
-        }
-      },
-    }
-  }
+  connection: Mongoose,
 });
 
-var UserSchema = {
+var UserSchema = Mongoose.Schema({
   username: {type: String, required: true, unique: true, match: /^\w+$/},
   password_hash: {type: String, required: true, select: false},
-}
+})
 
 var vaccSchema = Mongoose.Schema({
   name: String,
   date: Date,
 }, {_id: false})
 
-var PetSchema = {
+var PetSchema = Mongoose.Schema({
   id: {type: Number, required: true, unique: true},
   name: String,
   owner: String,
   animalType: {type: String, default: 'unknown'},
   vaccinations: [vaccSchema]
-}
+})
+
+API.addModel('Pet', Mongoose.model('Pet', PetSchema));
+API.addModel('User', Mongoose.model('User', UserSchema));
 
 var authenticateUser = function(req, res, next) {
   var query = {
     username: req.headers['username'],
   };
-  API.User.db.findOne(query).select('+password_hash').exec(function(err, user) {
+  console.log('find user');
+  API.User.model.findOne(query).select('+password_hash').exec(function(err, user) {
+    console.log('found', err, user);
     if (err) {
       res.status(500).json({error: err.toString()})
     } else if (!user || !user.password_hash) {
@@ -77,30 +58,8 @@ var authenticateUser = function(req, res, next) {
   }) 
 }
 
-var SwaggerLogin = {
-  swagger: {
-    security: {username: [], password: []},
-  }
-}
-
-API.addModel('Pet', API.mongoose.model('Pet', new Mongoose.Schema(PetSchema)));
-API.addModel('User', API.mongoose.model('User', new Mongoose.Schema(UserSchema)));
-
 // Creates a new user.
-API.User.post('/users', {
-  swagger: {
-    parameters: [{
-        name: 'body',
-        in: 'body',
-        schema: {
-          properties: {
-            username: {type: 'string'},
-            password: {type: 'string'}
-          }
-      }
-    }]
-  }
-}, function(req, res, next) {
+API.User.post('/users', function(req, res, next) {
   req.jammin.document.password_hash = Hash.generate(req.body.password);
   next();
 });
@@ -115,14 +74,7 @@ API.Pet.get('/pets/:id');
 API.Pet.getMany('/pets');
 
 // Searches pets by name
-API.Pet.getMany('/search/pets', {
-  swagger: {
-    description: "Search all pets by name",
-    parameters: [
-      {name: 'q', in: 'query', type: 'string', description: 'Any regex'}
-    ]
-  }
-}, function(req, res, next) {
+API.Pet.getMany('/search/pets', J.sort('+name'), function(req, res, next) {
   req.jammin.query = {
     name: { "$regex": new RegExp(req.query.q) }
   };
@@ -134,14 +86,15 @@ var upsert = function(req, res, next) {
   next();
 }
 
-API.Pet.post('/pets/:id', SwaggerLogin, upsert, authenticateUser, function(req, res, next) {
+API.Pet.post('/pets/:id', upsert, authenticateUser, function(req, res, next) {
   req.jammin.document.owner = req.user.username;
   req.jammin.document.id = req.params.id;
   next();
 })
 
 // Creates one or more new pets.
-API.Pet.postMany('/pets', SwaggerLogin, authenticateUser, function(req, res, next) {
+API.Pet.postMany('/pets', authenticateUser, function(req, res, next) {
+  console.log('postMany pets', req.jammin.document)
   if (!Array.isArray(req.jammin.document)) req.jammin.document = [req.jammin.document];
   req.jammin.document.forEach(function(pet) {
     pet.owner = req.user.username;
@@ -157,16 +110,16 @@ var enforceOwnership = function(req, res, next) {
 }
 
 // Changes a pet.
-API.Pet.patch('/pets/:id', SwaggerLogin, authenticateUser, enforceOwnership);
+API.Pet.patch('/pets/:id', authenticateUser, enforceOwnership);
 
 // Changes every pet that matches the query.
-API.Pet.patchMany('/pets', SwaggerLogin, authenticateUser, enforceOwnership);
+API.Pet.patchMany('/pets', authenticateUser, enforceOwnership);
 
 // Deletes a pet by ID.
-API.Pet.delete('/pets/:id', SwaggerLogin, authenticateUser, enforceOwnership);
+API.Pet.delete('/pets/:id', authenticateUser, enforceOwnership);
 
 // Deletes every pet that matches the query.
-API.Pet.deleteMany('/pets', SwaggerLogin, authenticateUser, enforceOwnership);
+API.Pet.deleteMany('/pets', authenticateUser, enforceOwnership);
 
 API.router.get('/pet_count', function(req, res) {
   API.Pet.getMany(req, res, function(pets) {
@@ -175,7 +128,5 @@ API.router.get('/pet_count', function(req, res) {
 })
 
 API.Pet.getMany('/pet_types', {mapItem: function(pet) {return pet.animalType}})
-
-API.swagger('/swagger.json');
 
 App.use('/api', API.router);

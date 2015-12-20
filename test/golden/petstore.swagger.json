@@ -22,23 +22,17 @@
   "paths": {
     "/users": {
       "post": {
+        "description": "Adds a User",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "schema": {
-              "properties": {
-                "username": {
-                  "type": "string"
-                },
-                "password": {
-                  "type": "string"
-                }
-              }
-            }
+              "$ref": "#/definitions/User"
+            },
+            "description": "A User to create."
           }
         ],
-        "description": "Adds a User",
         "responses": {
           "200": {
             "description": "Success"

@@ -20,6 +20,7 @@
   "devDependencies": {
     "chai": "^2.2.0",
     "cors": "^2.7.1",
+    "mockgoose": "^5.0.10",
     "password-hash": "^1.2.2",
     "validator": "^3.39.0"
   },

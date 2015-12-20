@@ -64,8 +64,7 @@ var failResponse = function(statusCode, done) {
 describe('Petstore', function() {
   this.timeout(4000);
   before(function(done) {
-    Petstore.listen(3333);
-    Petstore.dropAllEntries(done);
+    Petstore.listen(3333, done);
   });
 
   it('should allow new users', function(done) {
