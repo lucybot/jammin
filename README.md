@@ -1,11 +1,7 @@
-# Verson 1.0 Preview
-**This README is for the upcoming 1.0 version**
-
-To see documentation for the version on npm (0.2.1) visit
-[README-v0.md](README-v0.md)
+# jammin
 
 ## Installation
-```npm install lucybot/jammin```
+```npm install jammin```
 
 ## About
 Jammin is the fastest way to build REST APIs in NodeJS. It consists of:
