@@ -4,7 +4,7 @@
 ```npm install jammin```
 
 ## About
-Jammin is the fastest way to build REST APIs in NodeJS. It consists of:
+Jammin is a concise, extensible framework for building REST APIs in NodeJS. It consists of:
 * A light-weight wrapper around [Mongoose](http://mongoosejs.com/) to perform database operations
 * An Express router to link database operations to HTTP operations
 
